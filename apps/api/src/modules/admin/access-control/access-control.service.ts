@@ -5,23 +5,13 @@ import { ErrorCodes } from "@/errors/error-codes";
 import { hashPassword } from "../../auth/internal/password.service";
 import * as accessControlRepository from "./access-control.repository";
 import { mapRole, mapUser } from "./access-control.mapper";
-import type { CreateUserSchema, UpdateUserSchema, UpdateRolePermissionsSchema, CreateRoleSchema, UpdateRoleSchema } from "@repo/shared";
+import type { CreateUserSchema, UpdateUserSchema, UpdateRolePermissionsSchema, CreateRoleSchema, UpdateRoleSchema, UserQueryParams } from "@repo/shared";
 
 /* =====================
    USERS
 ===================== */
 
-type GetUsersParams = {
-    page?: number;
-    limit?: number;
-    search?: string;
-    role?: string;
-    status?: string;
-    sort?: string;
-};
-
-
-export async function getUsers(params: GetUsersParams) {
+export async function getUsers(params: UserQueryParams) {
     const users =
         await accessControlRepository.findAllUsers(params);
 
@@ -69,7 +59,7 @@ export async function createUser(
             roleIds,
         });
 
-    return user;
+    return mapUser(user);
 }
 
 
@@ -117,6 +107,15 @@ export async function updateUser(
     return updatedUser;
 }
 
+export const deleteUserService = async (userId: number) => {
+    const user = await accessControlRepository.findUserById(userId);
+
+    if (!user) {
+        throw new AppError("User not found", 404, ErrorCodes.USER_NOT_FOUND);
+    }
+
+    await accessControlRepository.deleteUser(userId);
+};
 
 /* =====================
    ROLES

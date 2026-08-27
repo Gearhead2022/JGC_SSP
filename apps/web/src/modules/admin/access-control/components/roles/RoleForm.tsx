@@ -3,22 +3,8 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import {
-    createRoleSchema,
-    updateRoleSchema,
-    type CreateRoleSchema,
-    type UpdateRoleSchema,
-    type Role,
-} from "@repo/shared";
-
-type RoleFormProps = {
-    mode: "create" | "edit";
-    role?: Role | null;
-    isSubmitting?: boolean;
-    onCreate: (data: CreateRoleSchema) => void;
-    onUpdate: (data: UpdateRoleSchema) => void;
-};
+import { createRoleSchema, updateRoleSchema, type CreateRoleSchema, type UpdateRoleSchema } from "@repo/shared";
+import { RoleFormProps } from "../../types/access-control.types";
 
 export function RoleForm({
     mode,

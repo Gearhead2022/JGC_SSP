@@ -80,7 +80,8 @@ workspace/
 │   │   │   │   │   │   │   └── accessControlFixtures.ts    # Access-control skeleton fixture data
 │   │   │   │   │   │   │
 │   │   │   │   │   │   ├── hooks/                          # Access-control queries/mutations
-│   │   │   │   │   │   │   └── useAccessControl.ts 
+│   │   │   │   │   │   │   ├── useAccessControl.ts 
+|   |   |   |   |   |   |   └── useAccessControlSocket.ts   # Subscribes to socket events
 │   │   │   │   │   │   │
 │   │   │   │   │   │   ├── services/                       # Access-control API requests
 │   │   │   │   │   │   │   └── access-control.service.ts
@@ -143,8 +144,7 @@ workspace/
 │   │   │   │
 │   │   │   ├── hooks/                                      # Application-wide React hooks
 │   │   │   │   ├── useDebounce.ts                          # Debounces rapidly changing values
-│   │   │   │   ├── useDisclosure.ts                        # Manages open/closed UI state
-│   │   │   │   └── useSocketEvent.ts                       # Subscribes to socket events
+│   │   │   │   └── useDisclosure.ts                        # Manages open/closed UI state
 │   │   │   │   
 │   │   │   ├── providers/                                  # Global React providers
 │   │   │   │   ├── AppProvider.tsx                         # Composes application providers
@@ -283,8 +283,11 @@ workspace/
 │       │   ├── socket/                                     # Real-time communication infrastructure
 │       │   │   ├── index.ts                                # Initializes Socket.IO 
 │       │   │   ├── socket-auth.ts                          # Authenticates socket connections
-│       │   │   └── handlers/
-│       │   │       └── notification.handler.ts             # Handles notification socket events
+│       │   │   ├── socket.types.ts.ts                      # Socket.IO-specific backend types
+│       │   │   ├── handlers/
+│       │   │   │   └── notification.handler.ts             # Handles client-to-server notification events
+│       │   │   └── emitters/
+│       │   │       └── user.emitter.ts                     # Emits server-to-client user events
 │       │   │
 │       │   ├── errors/                                     # Application error definitions
 │       │   │   ├── app-error.ts                            # Custom operational error class
@@ -318,6 +321,12 @@ workspace/
 |   |   |   |   ├── pagination.types.ts
 │   |   │   |   ├── auth/
 │   |   │   │   |   └── auth.types.ts
+│   |   │   │   └── index.ts                                # Public type exports
+│   |   │   │
+│   │   │   ├── socket/                                      # Shared event contracts
+|   |   |   |   ├── notification.events.ts
+│   |   │   |   ├── admin/
+│   |   │   │   |   └── role.events.ts
 │   |   │   │   └── index.ts                                # Public type exports
 |   |   |   |   
 │   │   │   ├── constants/                                  # Constants needed by both applications

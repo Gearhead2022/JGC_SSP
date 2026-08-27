@@ -1,13 +1,13 @@
 "use client";
 
-import useSocket from "@/hooks/useSocket";
+// import { useNotificationSocket } from "@/hooks/socket/useNotificationSocket";
 
 export default function SocketProvider({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    useSocket();
+    // useNotificationSocket();
 
     return (
         <>

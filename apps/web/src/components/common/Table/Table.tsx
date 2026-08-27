@@ -31,13 +31,14 @@ export function Table<T>({
     onEdit,
     onDelete,
 
+    rowActions,
+
     actionsHeader,
 
     pagination,
     onPageChange,
 }: TableProps<T>) {
 
-    console.log('table pagination', pagination)
     return (
         <div className="space-y-4 bg-white">
             <TableHeader
@@ -54,8 +55,6 @@ export function Table<T>({
 
                 filters={filters}
                 actions={actions}
-
-                disabled={isLoading}
             />
 
             {isLoading ? (
@@ -81,6 +80,7 @@ export function Table<T>({
                     onView={onView}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    rowActions={rowActions}
                     actionsHeader={
                         actionsHeader
                     }

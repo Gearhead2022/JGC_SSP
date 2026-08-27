@@ -10,7 +10,6 @@ import { RoleForm } from "../components/roles/RoleForm";
 import { UserForm } from "../components/users/UserForm";
 import SweetAlert from "@/lib/alerts/alert";
 import { AppToast } from "@/lib/toast";
-
 import {
     usePermissions,
     useRoles,
@@ -20,20 +19,24 @@ import {
     useUpdateUser,
     useCreateRole,
     useUpdateRole,
+    useDeleteUser,
 } from "../hooks/useAccessControl";
 import { CreateRoleSchema, CreateUserSchema, Role, UpdateRoleSchema, UpdateUserSchema, User } from "@repo/shared";
-import { useDebounce } from "@/hooks/useDebaounce";
+import { useDebounce } from "@/hooks/useDebounce";
 import { accessControlFixture } from "../fixtures/accessControlFixtures";
 import { Button } from "@/components/ui/button";
-import { success } from "zod";
+import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { useAccessControlSocket } from "../hooks/useAccessControlSocket";
 
 export default function AccessControlView() {
+    useAccessControlSocket()
 
     const userModal = useDisclosure(); // Modal Control USer
     const roleModal = useDisclosure(); // Modal Control Role
 
     const { mutateAsync: createUser, isPending: pendingCreateUser } = useCreateUser();
     const { mutateAsync: updateUser, isPending: pendingUpdateUser } = useUpdateUser();
+    const { mutateAsync: deleteUser, isPending: pendingDeleteUser } = useDeleteUser();
 
     const { mutateAsync: createRole, isPending: pendingCreateRole } = useCreateRole();
     const { mutateAsync: updateRole, isPending: pendingUpdateRole } = useUpdateRole();
@@ -71,16 +74,17 @@ export default function AccessControlView() {
                 (id) => id !== permissionId
             );
 
-        await updatePermissions({
-            roleId,
-            data: {
-                permissionIds,
-            },
-        });
+        try {
 
-        AppToast.success(
-            "User deleted successfully."
-        );
+            await updatePermissions({
+                roleId,
+                data: { permissionIds },
+            });
+
+            AppToast.success("Permissions updated successfully.");
+        } catch {
+            AppToast.error("Failed to update permissions.");
+        }
 
     }
 
@@ -111,7 +115,6 @@ export default function AccessControlView() {
                 "Failed to created role."
             );
         }
-
     }
 
     async function handleUpdateRole(data: UpdateRoleSchema) {
@@ -144,12 +147,7 @@ export default function AccessControlView() {
     const [userSearch, setUserSearch] = useState("");
     const debouncedSearch = useDebounce(userSearch, 500);
 
-    const usersQuery = useUsers({
-        page: userPage,
-        limit: userLimit,
-        search: debouncedSearch,
-    });
-
+    const usersQuery = useUsers({ page: userPage, limit: userLimit, search: debouncedSearch });
     const users = usersQuery.data?.data ?? [];
 
     function handleUserSearchChange(value: string) {
@@ -169,19 +167,21 @@ export default function AccessControlView() {
 
     async function handleCreateUser(data: CreateUserSchema) {
         try {
-            await createUser(data);
+            const response = await createUser(data);
             userModal.close();
 
             SweetAlert.successAlert(
                 "Success",
-                "User created successfully."
+                response.message
             );
 
-            AppToast.success("asdasd")
         } catch (error) {
             SweetAlert.errorAlert(
                 "Failed",
-                "Failed to create user."
+                getApiErrorMessage(
+                    error,
+                    "Failed to create user."
+                )
             );
         }
     }
@@ -189,19 +189,51 @@ export default function AccessControlView() {
     async function handleUpdateUser(data: UpdateUserSchema) {
         if (!selectedUser) return;
         try {
-            await updateUser({ userId: selectedUser.id, data });
+            const response = await updateUser({ userId: selectedUser.id, data });
             userModal.close();
             setSelectedUser(null);
 
             SweetAlert.successAlert(
                 "Success",
-                "User updated successfully."
+                response.message
             );
 
         } catch (error) {
             SweetAlert.errorAlert(
                 "Failed",
-                "Failed to update user."
+                getApiErrorMessage(
+                    error,
+                    "Failed to update user."
+                )
+            );
+        }
+    }
+
+    async function handleDeleteUser(user: User) {
+        const confirmed = await SweetAlert.confirmationAlert2(
+            "Delete User?",
+            `This will permanently delete user ID ${user.id}. This cannot be undone.`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const response = await deleteUser(user.id);
+
+            userModal.close();
+            setSelectedUser(null);
+
+            SweetAlert.successAlert(
+                "Success",
+                response.message
+            );
+        } catch (error) {
+            SweetAlert.errorAlert(
+                "Failed",
+                getApiErrorMessage(
+                    error,
+                    "Failed to delete user."
+                )
             );
         }
     }
@@ -216,35 +248,33 @@ export default function AccessControlView() {
         userModal.open();
     }
 
-    const isLoading =
-        usersQuery.isLoading ||
-        rolesQuery.isLoading ||
-        permissionsQuery.isLoading;
+    const isInitialLoading =
+        usersQuery.isPending ||
+        rolesQuery.isPending ||
+        permissionsQuery.isPending;
 
     // Development only: keep skeleton visible longer
-    const [showSkeleton, setShowSkeleton] = useState(true);
+    // const [showSkeleton, setShowSkeleton] = useState(true);
 
-    useEffect(() => {
-        if (isLoading) {
-            setShowSkeleton(true);
-            return;
-        }
+    // useEffect(() => {
+    //     if (isLoading) {
+    //         setShowSkeleton(true);
+    //         return;
+    //     }
 
-        const timer = setTimeout(() => {
-            setShowSkeleton(false);
-        }, 3000);
+    //     const timer = setTimeout(() => {
+    //         setShowSkeleton(false);
+    //     }, 3000);
 
-        return () => clearTimeout(timer);
-    }, [isLoading]);
-
-    console.log('main page', usersQuery.data)
+    //     return () => clearTimeout(timer);
+    // }, [isLoading]);
 
     return (
         <>
             <Skeleton
                 name="admin-access-control"
-                loading={showSkeleton}
-                // loading={isLoading}
+                // loading={showSkeleton}
+                loading={isInitialLoading}
                 fixture={
                     <AccessControlContent
                         users={accessControlFixture.users}
@@ -260,6 +290,7 @@ export default function AccessControlView() {
 
                         onCreateUser={() => { }}
                         onEditUser={() => { }}
+                        onDeleteUser={() => { }}
 
                         onCreateRole={() => { }}
                         onEditRole={() => { }}
@@ -271,6 +302,8 @@ export default function AccessControlView() {
             >
                 <AccessControlContent
                     users={users}
+                    usersLoading={usersQuery.isFetching}
+
                     roles={roles}
                     permissions={permissions}
                     userSearch={userSearch}
@@ -282,6 +315,7 @@ export default function AccessControlView() {
 
                     onCreateUser={handleCreateUserClick}
                     onEditUser={handleEditUserClick}
+                    onDeleteUser={handleDeleteUser}
 
                     onCreateRole={handleCreateRoleClick}
                     onEditRole={handleEditRoleClick}
@@ -294,11 +328,7 @@ export default function AccessControlView() {
             <Modal
                 isOpen={userModal.isOpen}
                 onClose={handleCloseUserModal}
-                title={
-                    selectedUser
-                        ? "Edit User"
-                        : "Create User"
-                }
+                title={selectedUser ? "Edit User" : "Create User"}
                 size="md"
                 footer={
                     <>

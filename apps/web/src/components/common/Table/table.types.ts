@@ -63,9 +63,39 @@ export type TableProps<T> = {
    onEdit?: (row: T) => void;
    onDelete?: (row: T) => void;
 
+   rowActions?: TableAction<T>[];
+
    actionsHeader?: ReactNode;
 
    /* Pagination footer */
    pagination?: PaginationMeta;
    onPageChange: (page: number) => void;
+};
+
+export type TableBodyProps<T> = {
+   columns: TableColumn<T>[];
+   data: T[];
+
+   rowKey?: (row: T) => React.Key;
+
+   onView?: (row: T) => void;
+   onEdit?: (row: T) => void;
+   onDelete?: (row: T) => void;
+
+   rowActions?: TableAction<T>[];
+
+   actionsHeader?: React.ReactNode;
+};
+
+export type TableAction<T> = {
+   key: string;
+   label: string;
+   icon: React.ReactNode;
+   permission?: string;
+   onClick: (row: T) => void;
+
+   hidden?: (row: T) => boolean;
+   disabled?: (row: T) => boolean;
+
+   className?: string;
 };

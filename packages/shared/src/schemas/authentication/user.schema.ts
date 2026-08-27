@@ -3,8 +3,10 @@ import z from "zod";
 export const registerUserSchema = z.object({
     email: z.string().email().optional(),
     name: z.string().min(1),
-    username: z.string().min(3),
-    password: z.string().min(8),
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters"),
     isActive: z.boolean().optional(),
 })
 

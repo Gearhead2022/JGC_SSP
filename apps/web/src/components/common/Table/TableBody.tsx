@@ -1,35 +1,22 @@
-import type {
-    TableColumn,
-} from "./table.types";
-
-type TableBodyProps<T> = {
-    columns: TableColumn<T>[];
-    data: T[];
-
-    rowKey?: (row: T) => React.Key;
-
-    onView?: (row: T) => void;
-    onEdit?: (row: T) => void;
-    onDelete?: (row: T) => void;
-
-    actionsHeader?: React.ReactNode;
-};
+import PermissionGuard from "@/components/guards/PermissionGuard";
+import type { TableBodyProps } from "./table.types";
 
 export function TableBody<T>({
     columns,
     data,
     rowKey,
-
     onView,
     onEdit,
     onDelete,
-
+    rowActions,
     actionsHeader = "Actions",
+
 }: TableBodyProps<T>) {
     const hasActions =
         !!onView ||
         !!onEdit ||
-        !!onDelete;
+        !!onDelete ||
+        !!rowActions?.length;
 
     return (
         <div className="overflow-x-auto rounded-md border border-gray-200">
@@ -136,6 +123,41 @@ export function TableBody<T>({
                                                 Delete
                                             </button>
                                         )}
+
+                                        {rowActions?.map((action) => {
+                                            if (action.hidden?.(row)) {
+                                                return null;
+                                            }
+
+                                            const button = (
+                                                <button
+                                                    key={action.key}
+                                                    type="button"
+                                                    disabled={action.disabled?.(row)}
+                                                    onClick={() => action.onClick(row)}
+                                                    className={
+                                                        action.className ??
+                                                        "flex items-center gap-1 text-sm text-gray-900 hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+                                                    }
+                                                >
+                                                    {action.icon}
+                                                    {action.label}
+                                                </button>
+                                            );
+
+                                            if (!action.permission) {
+                                                return button;
+                                            }
+
+                                            return (
+                                                <PermissionGuard
+                                                    key={action.key}
+                                                    permissions={[action.permission]}
+                                                >
+                                                    {button}
+                                                </PermissionGuard>
+                                            );
+                                        })}
                                     </div>
                                 </td>
                             )}

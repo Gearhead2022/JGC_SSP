@@ -16,8 +16,6 @@ type TableHeaderProps = {
 
     filters?: ReactNode;
     actions?: ReactNode;
-
-    disabled?: boolean;
 };
 
 export function TableHeader({
@@ -35,8 +33,8 @@ export function TableHeader({
     filters,
     actions,
 
-    disabled = false,
 }: TableHeaderProps) {
+
     return (
         <div className="space-y-4">
             {(title || description) && (
@@ -68,7 +66,6 @@ export function TableHeader({
                             setRowsPerPage={(value: number) => {
                                 onLimitChange(value);
                             }}
-                            disabled={disabled}
                         />
 
                         <span className="ml-2">
@@ -84,12 +81,11 @@ export function TableHeader({
                         </span>
                         <input
                             type="search"
+                            name="table-search"
                             value={search ?? ""}
                             placeholder={searchPlaceholder}
-                            disabled={disabled}
-                            onChange={(event) =>
-                                onSearchChange(event.target.value)
-                            }
+                            autoComplete="off"
+                            onChange={(event) => onSearchChange(event.target.value)}
                             className="w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900"
                         />
                     </div>

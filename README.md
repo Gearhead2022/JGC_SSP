@@ -2445,35 +2445,952 @@ Factories generate reusable development or testing data.
 
 # Real-Time Communication
 
-Socket.IO provides real-time communication between frontend and backend.
+This directory contains the backend real-time communication infrastructure using Socket.IO.
+
+The socket layer complements the existing HTTP API. Normal CRUD operations and business transactions should continue to use HTTP endpoints, while Socket.IO is primarily used to notify connected clients about real-time changes and handle interactions that are naturally real-time.
+
+---
+
+## Directory Structure
 
 ```text
-Browser
-   │
-   │ Socket.IO
-   ▼
-HTTP Server
-   │
-   ▼
-Socket.IO Server
-   │
-   ▼
-Socket Handlers
+src/
+├── config/
+│   └── socket.config.ts
+│       # Creates and configures the Socket.IO server
+│
+└── socket/
+    ├── index.ts
+    │   # Registers middleware and handlers
+    │   # Stores the Socket.IO instance
+    │   # Exposes getIO()
+    │
+    ├── socket-auth.ts
+    │   # Authenticates Socket.IO connections
+    │
+    ├── socket.types.ts
+    │   # Socket.IO-specific backend types
+    │
+    ├── handlers/
+    │   ├── notification.handler.ts
+    │   └── chat.handler.ts
+    │
+    └── emitters/
+        └── user.emitter.ts
 ```
 
-Socket initialization belongs at the server/infrastructure level rather than inside individual controllers.
+Shared socket event contracts are located in:
 
-Feature-specific socket behavior can be organized into handlers.
+```text
+packages/shared/src/socket/
+├── index.ts
+├── user.events.ts
+├── notification.events.ts
+└── admin/
+    └── role.events.ts
+```
+
+Frontend socket infrastructure is located in:
+
+```text
+apps/web/src/
+├── lib/socket/
+│   └── socket-client.ts
+│
+└── modules/
+    └── <module>/
+        └── hooks/
+            └── use<Module>Socket.ts
+```
+
+---
+
+# Architecture
+
+The application uses HTTP for business operations and Socket.IO for real-time synchronization.
+
+Typical flow:
+
+```text
+Frontend
+   │
+   │ HTTP POST / PATCH / DELETE
+   ▼
+Controller
+   │
+   ▼
+Service
+   │
+   ▼
+Repository
+   │
+   ▼
+Database
+   │
+   ▼
+Socket Emitter
+   │
+   │ server-to-client event
+   ▼
+Connected Clients
+   │
+   ▼
+Module Socket Hook
+   │
+   ▼
+React Query Invalidation
+   │
+   ▼
+HTTP Refetch
+   │
+   ▼
+Updated UI
+```
 
 Example:
 
 ```text
-src/socket/
-├── index.ts
-├── socket-auth.ts
-└── handlers/
-    └── notification.handler.ts
+POST /users
+    ↓
+createUserController()
+    ↓
+createUser()
+    ↓
+repository.createUser()
+    ↓
+Database updated
+    ↓
+emitUserCreated()
+    ↓
+"user:created"
+    ↓
+useAccessControlSocket()
+    ↓
+invalidate ["access-control", "users"]
+    ↓
+React Query refetches users
 ```
+
+Socket.IO should not replace the existing REST API for normal CRUD operations.
+
+---
+
+# Shared Event Contracts
+
+Socket events that are used by both the frontend and backend belong in:
+
+```text
+@repo/shared
+```
+
+Example:
+
+```ts
+// packages/shared/src/socket/user.events.ts
+
+import type { User } from "../types";
+
+export interface UserServerToClientEvents {
+    "user:created": (user: User) => void;
+    "user:updated": (user: User) => void;
+}
+```
+
+Client-to-server events can be defined separately:
+
+```ts
+// packages/shared/src/socket/notification.events.ts
+
+export interface NotificationClientToServerEvents {
+    "notification:read": (
+        notificationId: number
+    ) => void;
+}
+```
+
+The event interfaces are combined in:
+
+```ts
+// packages/shared/src/socket/index.ts
+
+import type {
+    UserServerToClientEvents,
+} from "./user.events";
+
+import type {
+    NotificationClientToServerEvents,
+} from "./notification.events";
+
+export interface ServerToClientEvents
+    extends UserServerToClientEvents {}
+
+export interface ClientToServerEvents
+    extends NotificationClientToServerEvents {}
+```
+
+They must also be exported from the shared package root.
+
+```ts
+export * from "./socket";
+```
+
+This allows both applications to use:
+
+```ts
+import type {
+    ClientToServerEvents,
+    ServerToClientEvents,
+} from "@repo/shared";
+```
+
+---
+
+# Server-to-Client Events
+
+Server-to-client events are emitted by the backend and received by connected frontend clients.
+
+Examples:
+
+```text
+user:created
+user:updated
+role:created
+vehicle:created
+vehicle:updated
+notification:new
+```
+
+They belong in:
+
+```ts
+ServerToClientEvents
+```
+
+Example:
+
+```ts
+export interface UserServerToClientEvents {
+    "user:created": (user: User) => void;
+    "user:updated": (user: User) => void;
+}
+```
+
+Backend:
+
+```ts
+getIO().emit("user:created", user);
+```
+
+Frontend:
+
+```ts
+socket.on("user:created", handleUserCreated);
+```
+
+---
+
+# Client-to-Server Events
+
+Client-to-server events originate from the frontend and are handled directly by the Socket.IO backend.
+
+Examples may include:
+
+```text
+notification:read
+chat:send
+chat:typing
+chat:stop-typing
+```
+
+They belong in:
+
+```ts
+ClientToServerEvents
+```
+
+Example:
+
+```ts
+export interface NotificationClientToServerEvents {
+    "notification:read": (
+        notificationId: number
+    ) => void;
+}
+```
+
+Frontend:
+
+```ts
+socket.emit("notification:read", notificationId);
+```
+
+Backend:
+
+```ts
+socket.on(
+    "notification:read",
+    async (notificationId) => {
+        // Handle event
+    }
+);
+```
+
+Client-to-server Socket.IO events should primarily be used when the interaction is naturally real-time.
+
+Normal business operations should generally remain HTTP operations.
+
+---
+
+# Handlers
+
+Handlers process incoming client-to-server Socket.IO events.
+
+Location:
+
+```text
+src/socket/handlers/
+```
+
+Example:
+
+```ts
+export function notificationHandler(
+    io: AppSocketServer,
+    socket: AppSocket
+) {
+    socket.on(
+        "notification:read",
+        async (notificationId) => {
+            // Handle notification read event
+        }
+    );
+}
+```
+
+Handlers should be registered when a socket connects.
+
+```ts
+io.on("connection", (socket) => {
+    notificationHandler(io, socket);
+    chatHandler(io, socket);
+});
+```
+
+Handlers should not contain large amounts of business logic.
+
+When possible, delegate business logic to the appropriate service:
+
+```text
+Socket Handler
+      ↓
+Service
+      ↓
+Repository
+      ↓
+Database
+```
+
+---
+
+# Emitters
+
+Emitters are responsible for sending server-to-client events.
+
+Location:
+
+```text
+src/socket/emitters/
+```
+
+Example:
+
+```ts
+import { getIO } from "@/socket";
+import type { User } from "@repo/shared";
+
+export function emitUserCreated(user: User) {
+    getIO().emit("user:created", user);
+}
+
+export function emitUserUpdated(user: User) {
+    getIO().emit("user:updated", user);
+}
+```
+
+Keeping emitters separate prevents Socket.IO logic from being duplicated throughout controllers and services.
+
+---
+
+# Socket Types
+
+Backend-specific Socket.IO types belong in:
+
+```text
+src/socket/socket.types.ts
+```
+
+Current setup:
+
+```ts
+import type {
+    Server,
+    Socket,
+} from "socket.io";
+
+import type {
+    ClientToServerEvents,
+    ServerToClientEvents,
+} from "@repo/shared";
+
+export type AppSocketServer = Server<
+    ClientToServerEvents,
+    ServerToClientEvents
+>;
+
+export type AppSocket = Socket<
+    ClientToServerEvents,
+    ServerToClientEvents
+>;
+```
+
+These aliases ensure that backend emitters and handlers use the same shared event contracts.
+
+Example:
+
+```ts
+export function notificationHandler(
+    io: AppSocketServer,
+    socket: AppSocket
+) {
+    // ...
+}
+```
+
+Additional Socket.IO generic types should only be introduced when they are actually required.
+
+---
+
+# Socket Initialization
+
+Socket.IO is created in:
+
+```text
+src/config/socket.config.ts
+```
+
+Example:
+
+```ts
+const io = new SocketIOServer<
+    ClientToServerEvents,
+    ServerToClientEvents
+>(server, {
+    cors: {
+        origin: allowedOrigins,
+        credentials: true,
+    },
+});
+
+registerSocketHandlers(io);
+```
+
+The configuration layer is responsible for creating the Socket.IO server.
+
+The `socket/index.ts` file is responsible for registering middleware and event handlers.
+
+---
+
+# Socket Instance
+
+The initialized Socket.IO instance is stored so that emitters can access it without passing `io` through every controller or service.
+
+```ts
+let ioInstance: AppSocketServer | null = null;
+```
+
+During registration:
+
+```ts
+export function registerSocketHandlers(
+    io: AppSocketServer
+) {
+    ioInstance = io;
+
+    io.use(authenticateSocket);
+
+    io.on("connection", (socket) => {
+        notificationHandler(io, socket);
+        chatHandler(io, socket);
+    });
+}
+```
+
+The instance can then be accessed through:
+
+```ts
+export function getIO(): AppSocketServer {
+    if (!ioInstance) {
+        throw new Error(
+            "Socket.IO is not initialized"
+        );
+    }
+
+    return ioInstance;
+}
+```
+
+Emitters can therefore simply use:
+
+```ts
+getIO().emit("user:created", user);
+```
+
+---
+
+# Authentication
+
+Socket authentication is handled by:
+
+```text
+src/socket/socket-auth.ts
+```
+
+The application uses the authentication cookie sent during the Socket.IO handshake.
+
+The frontend Socket.IO client must therefore use:
+
+```ts
+io(SOCKET_URL, {
+    withCredentials: true,
+});
+```
+
+The backend validates the token before allowing the connection.
+
+```text
+Browser
+   │
+   │ Cookie
+   ▼
+Socket.IO handshake
+   │
+   ▼
+authenticateSocket()
+   │
+   ├── valid → connection allowed
+   │
+   └── invalid → connection rejected
+```
+
+Do not trust user IDs or permission information sent manually from the frontend when the authenticated socket identity can provide that information.
+
+---
+
+# Frontend Socket Client
+
+The frontend maintains a reusable Socket.IO client.
+
+Location:
+
+```text
+apps/web/src/lib/socket/socket-client.ts
+```
+
+Example:
+
+```ts
+import {
+    io,
+    Socket,
+} from "socket.io-client";
+
+const SOCKET_URL =
+    process.env.NEXT_PUBLIC_BACKEND_LAN_URL;
+
+let socket: Socket | null = null;
+
+export const createSocket = () => {
+    if (!socket) {
+        socket = io(SOCKET_URL!, {
+            autoConnect: true,
+            withCredentials: true,
+        });
+    }
+
+    return socket;
+};
+```
+
+The socket instance is shared rather than creating a new connection for every module.
+
+---
+
+# Frontend Module Listeners
+
+Socket listeners should normally be organized by module.
+
+Example:
+
+```text
+modules/access-control/hooks/
+└── useAccessControlSocket.ts
+```
+
+```ts
+"use client";
+
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { createSocket } from "@/lib/socket/socket-client";
+
+export function useAccessControlSocket() {
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        const socket = createSocket();
+
+        const handleUserCreated = () => {
+            queryClient.invalidateQueries({
+                queryKey: [
+                    "access-control",
+                    "users",
+                ],
+            });
+        };
+
+        const handleUserUpdated = () => {
+            queryClient.invalidateQueries({
+                queryKey: [
+                    "access-control",
+                    "users",
+                ],
+            });
+        };
+
+        socket.on(
+            "user:created",
+            handleUserCreated
+        );
+
+        socket.on(
+            "user:updated",
+            handleUserUpdated
+        );
+
+        return () => {
+            socket.off(
+                "user:created",
+                handleUserCreated
+            );
+
+            socket.off(
+                "user:updated",
+                handleUserUpdated
+            );
+        };
+    }, [queryClient]);
+}
+```
+
+The module can activate the listener from its main view:
+
+```ts
+export function AccessControlView() {
+    useAccessControlSocket();
+
+    // ...
+}
+```
+
+---
+
+# React Query Integration
+
+Socket events should usually signal that server state has changed.
+
+React Query remains responsible for retrieving and caching the actual server state.
+
+Therefore, prefer:
+
+```ts
+socket.on("user:updated", () => {
+    queryClient.invalidateQueries({
+        queryKey: [
+            "access-control",
+            "users",
+        ],
+    });
+});
+```
+
+instead of manually modifying large amounts of cached data unless there is a specific performance reason to do so.
+
+This provides:
+
+```text
+Socket event
+     ↓
+Query invalidation
+     ↓
+HTTP refetch
+     ↓
+Backend remains source of truth
+```
+
+Prefix invalidation can update all variations of a query.
+
+For example:
+
+```ts
+queryClient.invalidateQueries({
+    queryKey: ["access-control", "users"],
+});
+```
+
+can invalidate queries such as:
+
+```text
+["access-control", "users", { page: 1 }]
+["access-control", "users", { page: 2 }]
+["access-control", "users", { search: "john" }]
+```
+
+---
+
+# Listener Cleanup
+
+Feature hooks must remove the listeners they register.
+
+Correct:
+
+```ts
+socket.on("user:created", handleUserCreated);
+
+return () => {
+    socket.off(
+        "user:created",
+        handleUserCreated
+    );
+};
+```
+
+Avoid disconnecting the shared socket from a module hook:
+
+```ts
+// Avoid in feature hooks
+socket.disconnect();
+```
+
+The socket client is shared by multiple modules.
+
+Disconnecting it when one component unmounts could interrupt socket listeners used by other parts of the application.
+
+---
+
+# When to Use HTTP vs Socket.IO
+
+Use HTTP for normal business operations:
+
+```text
+Create user
+Update user
+Delete user
+Create role
+Update permissions
+Create vehicle
+Update vehicle
+Create service record
+Fetch data
+Pagination
+Search
+Filtering
+```
+
+Example:
+
+```text
+PATCH /users/:id
+```
+
+Use Socket.IO for real-time synchronization:
+
+```text
+user:created
+user:updated
+vehicle:updated
+notification:new
+system:announcement
+```
+
+Use client-to-server Socket.IO events for interactions that are naturally real-time:
+
+```text
+chat:send
+chat:typing
+chat:stop-typing
+```
+
+The general rule is:
+
+```text
+HTTP
+    = commands, CRUD, queries and business operations
+
+Socket.IO
+    = real-time events and synchronization
+```
+
+---
+
+# Adding a New Server-to-Client Event
+
+Example: vehicle updates.
+
+## 1. Add the shared event contract
+
+```ts
+// @repo/shared/socket/vehicle.events.ts
+
+import type { Vehicle } from "../types";
+
+export interface VehicleServerToClientEvents {
+    "vehicle:created": (
+        vehicle: Vehicle
+    ) => void;
+
+    "vehicle:updated": (
+        vehicle: Vehicle
+    ) => void;
+}
+```
+
+## 2. Register it with ServerToClientEvents
+
+```ts
+export interface ServerToClientEvents
+    extends
+        UserServerToClientEvents,
+        VehicleServerToClientEvents {}
+```
+
+## 3. Create the backend emitter
+
+```ts
+// src/socket/emitters/vehicle.emitter.ts
+
+import { getIO } from "@/socket";
+import type { Vehicle } from "@repo/shared";
+
+export function emitVehicleCreated(
+    vehicle: Vehicle
+) {
+    getIO().emit(
+        "vehicle:created",
+        vehicle
+    );
+}
+
+export function emitVehicleUpdated(
+    vehicle: Vehicle
+) {
+    getIO().emit(
+        "vehicle:updated",
+        vehicle
+    );
+}
+```
+
+## 4. Emit after a successful operation
+
+```ts
+const result = await service.createVehicle(
+    req.body
+);
+
+emitVehicleCreated(result);
+```
+
+Only emit after the business operation succeeds.
+
+## 5. Create the frontend module listener
+
+```ts
+export function useVehicleSocket() {
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        const socket = createSocket();
+
+        const handleVehicleUpdated = () => {
+            queryClient.invalidateQueries({
+                queryKey: ["vehicles"],
+            });
+        };
+
+        socket.on(
+            "vehicle:updated",
+            handleVehicleUpdated
+        );
+
+        return () => {
+            socket.off(
+                "vehicle:updated",
+                handleVehicleUpdated
+            );
+        };
+    }, [queryClient]);
+}
+```
+
+---
+
+# Naming Convention
+
+Use domain-prefixed event names:
+
+```text
+user:created
+user:updated
+
+role:created
+role:updated
+
+service:created
+service:updated
+
+notification:new
+notification:read
+
+```
+
+Preferred format:
+
+```text
+<domain>:<action>
+```
+
+This keeps event names predictable and avoids collisions as the application grows.
+
+---
+
+# Guidelines
+
+1. Keep shared event contracts in `@repo/shared`.
+2. Keep backend Socket.IO infrastructure inside `apps/api`.
+3. Keep frontend socket connection infrastructure inside `apps/web`.
+4. Group event contracts by business domain as the number of events grows.
+5. Use handlers for client-to-server events.
+6. Use emitters for server-to-client events.
+7. Keep business logic in services rather than socket handlers.
+8. Keep normal CRUD and queries in the HTTP API.
+9. Use Socket.IO to notify clients about real-time changes.
+10. Use React Query invalidation when an event indicates cached server state has changed.
+11. Remove feature listeners during component cleanup.
+12. Do not disconnect the shared socket from individual feature hooks.
+13. Keep event names and payloads strongly typed.
+14. Do not duplicate frontend and backend event contracts.
+15. Add additional socket abstractions only when the application actually needs them.
 
 ---
 

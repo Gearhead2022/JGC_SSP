@@ -265,7 +265,26 @@ export async function createUser(data: {
             })),
         });
 
-        return user;
+        return tx.user.findUniqueOrThrow({
+            where: {
+                id: user.id,
+            },
+            include: {
+                roles: {
+                    include: {
+                        role: {
+                            include: {
+                                permissions: {
+                                    include: {
+                                        permission: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
     });
 }
 
@@ -290,19 +309,15 @@ export async function updateUser(
                 ...(data.name !== undefined && {
                     name: data.name,
                 }),
-
                 ...(data.username !== undefined && {
                     username: data.username,
                 }),
-
                 ...(data.email !== undefined && {
                     email: data.email,
                 }),
-
                 ...(data.password !== undefined && {
                     password: data.password,
                 }),
-
                 ...(data.isActive !== undefined && {
                     isActive: data.isActive,
                 }),
@@ -329,6 +344,14 @@ export async function updateUser(
         return user;
     });
 }
+
+export const deleteUser = async (userId: number) => {
+    return prisma.user.delete({
+        where: {
+            id: userId,
+        },
+    });
+};
 
 export async function createRole(data: {
     name: string;

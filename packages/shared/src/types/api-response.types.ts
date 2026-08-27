@@ -11,3 +11,9 @@ export interface ApiResponse<T> {
     data: T;
     pagination?: PaginationMeta;
 }
+
+export type ApiErrorResponse = {
+    success: false;
+    message: string;
+    code?: string;
+};

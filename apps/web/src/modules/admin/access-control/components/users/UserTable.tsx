@@ -1,49 +1,24 @@
-import type { PaginationMeta, User } from "@repo/shared";
-
-import {
-    Table,
-    type TableColumn,
-    type TablePaginationProps,
-} from "@/components/common/Table";
-
+import type { User } from "@repo/shared";
+import { Table, type TableColumn } from "@/components/common/Table";
 import PermissionGuard from "@/components/guards/PermissionGuard";
 import { Button } from "@/components/ui/button";
-
-type UserTableProps = {
-    users: User[];
-    isLoading?: boolean;
-
-    search: string;
-    onSearchChange: (value: string) => void;
-
-    limit: number;
-    onLimitChange: (value: number) => void;
-
-    onCreate: () => void;
-    onEdit: (user: User) => void;
-
-    pagination?: PaginationMeta;
-    onPageChange: (page: number) => void;
-};
+import { UserTableProps } from "../../types/access-control.types";
+import { Printer, Power } from "lucide-react";
 
 export function UserTable({
     users,
-    isLoading = false,
-
+    usersLoading = false,
     search,
     onSearchChange,
-
     limit,
     onLimitChange,
-
     onCreate,
     onEdit,
-
+    onDelete,
     pagination,
     onPageChange,
 }: UserTableProps) {
 
-    console.log('user table', pagination)
     const columns: TableColumn<User>[] = [
         {
             key: "name",
@@ -75,6 +50,14 @@ export function UserTable({
         },
     ];
 
+    function handleActivate() {
+        console.log('sample handler');
+    }
+
+    function handlePrint() {
+        console.log('print');
+    }
+
     return (
         <Table<User>
             title="Users"
@@ -83,7 +66,7 @@ export function UserTable({
             columns={columns}
             data={users}
 
-            isLoading={isLoading}
+            isLoading={usersLoading}
 
             search={search}
             onSearchChange={onSearchChange}
@@ -91,7 +74,7 @@ export function UserTable({
 
             limit={limit}
             onLimitChange={onLimitChange}
-            limitOptions={[10, 25, 50, 100]}
+            limitOptions={[5, 10, 25, 50, 100]}
 
             actions={
                 <PermissionGuard
@@ -107,6 +90,7 @@ export function UserTable({
             }
 
             onEdit={onEdit}
+            onDelete={onDelete}
 
             pagination={pagination}
             onPageChange={onPageChange}
@@ -114,6 +98,24 @@ export function UserTable({
             emptyMessage="No users found."
 
             rowKey={(user) => user.id}
+
+            rowActions={[
+                {
+                    key: "activate",
+                    label: "Activate",
+                    icon: <Power size={14} />,
+                    permission: "ADMIN_MANAGE",
+                    hidden: (user) => user.isActive,
+                    onClick: handleActivate,
+                },
+                {
+                    key: "print",
+                    label: "Print",
+                    icon: <Printer size={14} />,
+                    permission: "ADMIN_MANAGE",
+                    onClick: handlePrint,
+                },
+            ]}
         />
     );
 }

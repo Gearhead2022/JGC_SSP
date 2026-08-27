@@ -24,6 +24,12 @@ export const updateUserRequestSchema = z.object({
     body: updateUserSchema,
 });
 
+export const deleteUserRequestSchema = z.object({
+    params: z.object({
+        userId: z.coerce.number().int().positive(),
+    }),
+});
+
 /* =====================
    ROLE REQUEST SCHEMAS
 ===================== */

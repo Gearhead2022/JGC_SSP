@@ -5,6 +5,7 @@ import { Router } from "express";
 import {
     createRoleController,
     createUserController,
+    deleteUserController,
     getPermissionsController,
     getRolesController,
     getUsersController,
@@ -23,6 +24,7 @@ import {
     updateRolePermissionsRequestSchema,
     updateRoleRequestSchema,
     updateUserRequestSchema,
+    deleteUserRequestSchema,
 } from "./access-control.schema";
 
 const router = Router();
@@ -64,6 +66,16 @@ router.patch(
     }),
     validate(updateUserRequestSchema),
     updateUserController
+);
+
+router.delete(
+    "/users/:userId",
+    authorize({
+        roles: ["ADMIN"],
+        permissions: ["users.delete", "ADMIN_MANAGE"],
+    }),
+    validate(deleteUserRequestSchema),
+    deleteUserController
 );
 
 /* =====================

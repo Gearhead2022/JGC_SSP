@@ -10,28 +10,21 @@ import {
     CreateRoleSchema,
     UpdateRoleSchema,
     UpdateRolePermissionsSchema,
+    UserQueryParams
 } from "@repo/shared";
 
 /* =====================
    API CALLS
 ===================== */
 
-type Params = {
-    search?: string;
-};
-
 // USERS
-export const getUsersService = async (param: Params): Promise<
-    ApiResponse<User[]>
-> => {
+export const getUsersService = async (
+    params: UserQueryParams
+): Promise<ApiResponse<User[]>> => {
     const res = await api.get<ApiResponse<User[]>>(
         "/admin/access-control/users",
-        {
-            params: param,
-        }
+        { params }
     );
-
-    console.log('services', res)
 
     return res.data;
 };
@@ -54,6 +47,16 @@ export const updateUserService = async (
     const res = await api.patch<ApiResponse<User>>(
         `/admin/access-control/users/${userId}`,
         params
+    );
+
+    return res.data;
+};
+
+export const deleteUserService = async (
+    userId: number,
+): Promise<ApiResponse<null>> => {
+    const res = await api.delete<ApiResponse<null>>(
+        `/admin/access-control/users/${userId}`
     );
 
     return res.data;

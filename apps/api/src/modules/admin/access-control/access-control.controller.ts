@@ -1,7 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 
 import { sendSuccess } from "@/lib/http/response";
-import * as service from "./access-control.service";
+import * as accessControlService from "./access-control.service";
+import { emitUserCreated } from "@/socket/emitters/user.emitter";
 
 export async function getUsersController(
     req: Request,
@@ -9,7 +10,14 @@ export async function getUsersController(
     next: NextFunction
 ): Promise<void> {
     try {
-        const result = await service.getUsers({
+        const status =
+            req.query.status === "all" ||
+                req.query.status === "active" ||
+                req.query.status === "inactive"
+                ? req.query.status
+                : undefined;
+
+        const result = await accessControlService.getUsers({
             page: Number(req.query.page) || 1,
             limit: Number(req.query.limit) || 10,
 
@@ -23,10 +31,7 @@ export async function getUsersController(
                     ? req.query.role
                     : undefined,
 
-            status:
-                typeof req.query.status === "string"
-                    ? req.query.status
-                    : undefined,
+            status,
 
             sort:
                 typeof req.query.sort === "string"
@@ -42,14 +47,15 @@ export async function getUsersController(
     }
 }
 
-
 export async function createUserController(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
     try {
-        const result = await service.createUser(req.body);
+        const result = await accessControlService.createUser(req.body);
+
+        emitUserCreated(result);
 
         sendSuccess(res, result, {
             statusCode: 201,
@@ -66,7 +72,7 @@ export async function updateUserController(
     next: NextFunction
 ) {
     try {
-        const result = await service.updateUser(
+        const result = await accessControlService.updateUser(
             Number(req.params.userId),
             req.body
         );
@@ -80,13 +86,31 @@ export async function updateUserController(
     }
 }
 
+export const deleteUserController = async (
+    req: Request,
+    res: Response
+) => {
+    const userId = Number(req.params.userId);
+
+    await accessControlService.deleteUserService(userId);
+
+    return sendSuccess(
+        res,
+        null,
+        { message: "User deleted successfully" }
+    );
+};
+
+
+
+
 export async function getRolesController(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
     try {
-        const roles = await service.getRoles();
+        const roles = await accessControlService.getRoles();
 
         sendSuccess(res, roles, {
             statusCode: 200,
@@ -104,7 +128,7 @@ export async function createRoleController(
 ) {
 
     try {
-        const role = await service.createRole(
+        const role = await accessControlService.createRole(
             req.body
         );
 
@@ -123,7 +147,7 @@ export async function updateRoleController(
     next: NextFunction
 ) {
     try {
-        const role = await service.updateRole(
+        const role = await accessControlService.updateRole(
             Number(req.params.roleId),
             req.body
         );
@@ -137,13 +161,16 @@ export async function updateRoleController(
     }
 }
 
+
+
+
 export async function getPermissionsController(
     req: Request,
     res: Response,
     next: NextFunction
 ) {
     try {
-        const permissions = await service.getPermissions();
+        const permissions = await accessControlService.getPermissions();
 
         sendSuccess(res, permissions, {
             statusCode: 200,
@@ -162,7 +189,7 @@ export async function updateRolePermissionsController(
 
     try {
         const result =
-            await service.updateRolePermissions(
+            await accessControlService.updateRolePermissions(
                 Number(req.params.roleId),
                 req.body.permissionIds
             );

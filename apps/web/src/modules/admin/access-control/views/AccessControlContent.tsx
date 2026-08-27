@@ -15,36 +15,7 @@ import PermissionGuard from "@/components/guards/PermissionGuard";
 import { UserTable } from "../components/users/UserTable";
 import { RoleTable } from "../components/roles/RoleTable";
 import { PermissionMatrix } from "../components/permissions/PermissionMatrix";
-
-type Tab = "users" | "roles" | "permissions";
-
-type AccessControlContentProps = {
-    users: User[];
-    roles: Role[];
-    permissions: Permission[];
-
-    usersLoading?: boolean;
-
-    userSearch: string;
-    userLimit: number;
-    userPagination?: PaginationMeta;
-
-    onUserSearchChange: (value: string) => void;
-    onUserLimitChange: (value: number) => void;
-    onUserPageChange: (page: number) => void;
-
-    onCreateUser: () => void;
-    onEditUser: (user: User) => void;
-
-    onCreateRole: () => void;
-    onEditRole: (role: Role) => void;
-
-    onPermissionChange: (
-        roleId: number,
-        permissionId: number,
-        checked: boolean
-    ) => void;
-};
+import { Tab, AccessControlContentProps } from "../types/access-control.types";
 
 export function AccessControlContent({
     users,
@@ -63,6 +34,7 @@ export function AccessControlContent({
 
     onCreateUser,
     onEditUser,
+    onDeleteUser,
 
     onCreateRole,
     onEditRole,
@@ -87,21 +59,21 @@ export function AccessControlContent({
                 <nav className="flex justify-center">
                     <div className="flex gap-3">
                         <Button
-                            variant="secondary"
+                            variant={tab === "users" ? "default" : "secondary"}
                             onClick={() => setTab("users")}
                         >
                             Users
                         </Button>
 
                         <Button
-                            variant="secondary"
+                            variant={tab === "roles" ? "default" : "secondary"}
                             onClick={() => setTab("roles")}
                         >
                             Roles
                         </Button>
 
                         <Button
-                            variant="secondary"
+                            variant={tab === "permissions" ? "default" : "secondary"}
                             onClick={() => setTab("permissions")}
                         >
                             Permissions
@@ -113,13 +85,14 @@ export function AccessControlContent({
             {tab === "users" && (
                 <UserTable
                     users={users}
-                    isLoading={usersLoading}
+                    usersLoading={usersLoading}
                     search={userSearch}
                     onSearchChange={onUserSearchChange}
                     limit={userLimit}
                     onLimitChange={onUserLimitChange}
                     onCreate={onCreateUser}
                     onEdit={onEditUser}
+                    onDelete={onDeleteUser}
                     pagination={userPagination}
                     onPageChange={onUserPageChange}
                 />

@@ -11,18 +11,9 @@ import {
     updateUserSchema,
     type CreateUserSchema,
     type UpdateUserSchema,
-    type Role,
-    type User,
 } from "@repo/shared";
 
-type UserFormProps = {
-    mode: "create" | "edit";
-    user?: User | null;
-    roles: Role[];
-    isSubmitting?: boolean;
-    onCreate?: (data: CreateUserSchema) => void;
-    onUpdate?: (data: UpdateUserSchema) => void;
-};
+import { UserFormProps } from "../../types/access-control.types";
 
 export function UserForm({
     mode,

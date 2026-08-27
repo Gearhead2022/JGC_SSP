@@ -1,10 +1,4 @@
-// hooks/useAccessControl.ts
-
-import {
-    useMutation,
-    useQuery,
-    useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 
 import {
     createRoleService,
@@ -15,21 +9,16 @@ import {
     updateRoleService,
     updateRolePermissionsService,
     updateUserService,
+    deleteUserService,
 } from "../service/access-control.service";
 import { ApiResponse, Permission, Role, UpdateRolePermissionsSchema, UpdateUserSchema, User } from "@repo/shared";
+import { UserQueryParams } from "@repo/shared";
 
-export type UserQueryParams = {
-    page?: number;
-    limit?: number;
-    search?: string;
-    role?: string;
-    status?: "all" | "active" | "inactive";
-    sort?: string;
-};
-export function useUsers(param: UserQueryParams) {
+export function useUsers(params: UserQueryParams) {
     return useQuery<ApiResponse<User[]>>({
-        queryKey: ["access-control", "users", param],
-        queryFn: () => getUsersService(param),
+        queryKey: ["access-control", "users", params],
+        queryFn: () => getUsersService(params),
+        placeholderData: keepPreviousData,
     });
 }
 
@@ -65,10 +54,7 @@ export function useUpdateUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            userId,
-            data,
-        }: {
+        mutationFn: ({ userId, data }: {
             userId: number;
             data: UpdateUserSchema;
         }) => updateUserService(userId, data),
@@ -80,6 +66,24 @@ export function useUpdateUser() {
         },
     });
 }
+
+export function useDeleteUser() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (userId: number) =>
+            deleteUserService(userId),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["access-control", "users"],
+            });
+        },
+    });
+}
+
+
+// Roles
 
 export function useCreateRole() {
     const queryClient = useQueryClient();
@@ -99,10 +103,7 @@ export function useUpdateRole() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            roleId,
-            data,
-        }: {
+        mutationFn: ({ roleId, data }: {
             roleId: number;
             data: UpdateUserSchema;
         }) => updateRoleService(roleId, data),
@@ -119,10 +120,7 @@ export function useUpdateRolePermissions() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            roleId,
-            data,
-        }: {
+        mutationFn: ({ roleId, data }: {
             roleId: number;
             data: UpdateRolePermissionsSchema;
         }) => updateRolePermissionsService(roleId, data),
