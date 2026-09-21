@@ -1,0 +1,1 @@
+export { default as CompSlipView } from "./views/CompSlipView";

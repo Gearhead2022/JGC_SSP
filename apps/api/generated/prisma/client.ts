@@ -66,3 +66,23 @@ export type Permission = Prisma.PermissionModel
  * 
  */
 export type RolePermission = Prisma.RolePermissionModel
+/**
+ * Model Pensioner
+ * 
+ */
+export type Pensioner = Prisma.PensionerModel
+/**
+ * Model ComputationSlip
+ * 
+ */
+export type ComputationSlip = Prisma.ComputationSlipModel
+/**
+ * Model LoanCollection
+ * 
+ */
+export type LoanCollection = Prisma.LoanCollectionModel
+/**
+ * Model BranchCounter
+ * 
+ */
+export type BranchCounter = Prisma.BranchCounterModel

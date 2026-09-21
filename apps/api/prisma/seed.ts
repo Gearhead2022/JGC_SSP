@@ -1,5 +1,5 @@
 import { seedPermissions, seedUsers, seedRoles } from "./seeders";
-import { factoryUser } from "./factories";
+import { factoryUser, factoryPensioner } from "./factories";
 
 async function main() {
     console.log("🌱 Starting database seed...");
@@ -11,6 +11,7 @@ async function main() {
 
     // Development/test data
     // await factoryUser();
+    await factoryPensioner();
 
     console.log("✅ Database seed completed");
 }

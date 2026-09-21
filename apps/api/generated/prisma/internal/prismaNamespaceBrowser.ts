@@ -55,7 +55,11 @@ export const ModelName = {
   Role: 'Role',
   UserRole: 'UserRole',
   Permission: 'Permission',
-  RolePermission: 'RolePermission'
+  RolePermission: 'RolePermission',
+  Pensioner: 'Pensioner',
+  ComputationSlip: 'ComputationSlip',
+  LoanCollection: 'LoanCollection',
+  BranchCounter: 'BranchCounter'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -126,6 +130,86 @@ export const RolePermissionScalarFieldEnum = {
 } as const
 
 export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnum)[keyof typeof RolePermissionScalarFieldEnum]
+
+
+export const PensionerScalarFieldEnum = {
+  id: 'id',
+  legacyPensionerId: 'legacyPensionerId',
+  lastName: 'lastName',
+  firstName: 'firstName',
+  middleName: 'middleName',
+  birthDate: 'birthDate',
+  actualPension: 'actualPension',
+  contingencyDate: 'contingencyDate',
+  bankName: 'bankName',
+  accountNumber: 'accountNumber',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type PensionerScalarFieldEnum = (typeof PensionerScalarFieldEnum)[keyof typeof PensionerScalarFieldEnum]
+
+
+export const ComputationSlipScalarFieldEnum = {
+  id: 'id',
+  counterNumber: 'counterNumber',
+  controlNumber: 'controlNumber',
+  accountNumber: 'accountNumber',
+  branchName: 'branchName',
+  pensionerId: 'pensionerId',
+  transactionDate: 'transactionDate',
+  effectivityDate: 'effectivityDate',
+  transactionType: 'transactionType',
+  status: 'status',
+  installment: 'installment',
+  terms: 'terms',
+  supplementary: 'supplementary',
+  principalAmount: 'principalAmount',
+  udi: 'udi',
+  collectionFee: 'collectionFee',
+  processingFee: 'processingFee',
+  loanProtectionFee: 'loanProtectionFee',
+  icod: 'icod',
+  grossCashOut: 'grossCashOut',
+  netCashOut: 'netCashOut',
+  totalCashOut: 'totalCashOut',
+  renewedFromId: 'renewedFromId',
+  closingBalance: 'closingBalance',
+  closedAt: 'closedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ComputationSlipScalarFieldEnum = (typeof ComputationSlipScalarFieldEnum)[keyof typeof ComputationSlipScalarFieldEnum]
+
+
+export const LoanCollectionScalarFieldEnum = {
+  id: 'id',
+  computationSlipId: 'computationSlipId',
+  collectionDate: 'collectionDate',
+  amount: 'amount',
+  beginningBalance: 'beginningBalance',
+  endingBalance: 'endingBalance',
+  status: 'status',
+  remarks: 'remarks',
+  postedAt: 'postedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LoanCollectionScalarFieldEnum = (typeof LoanCollectionScalarFieldEnum)[keyof typeof LoanCollectionScalarFieldEnum]
+
+
+export const BranchCounterScalarFieldEnum = {
+  id: 'id',
+  branchId: 'branchId',
+  computationSlipCounter: 'computationSlipCounter',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BranchCounterScalarFieldEnum = (typeof BranchCounterScalarFieldEnum)[keyof typeof BranchCounterScalarFieldEnum]
 
 
 export const SortOrder = {

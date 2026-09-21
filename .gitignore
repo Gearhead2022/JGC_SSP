@@ -20,6 +20,8 @@ out/
 dist/
 build/
 
+apps/api/generated/prisma/
+
 
 # ------------------------
 # Turborepo

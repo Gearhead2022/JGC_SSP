@@ -23,6 +23,18 @@ export const navigation: NavigationItem[] = [
         roles: ["ADMIN"],
     },
     {
+        title: "SSP-COMPSLIP",
+        href: ROUTES.SSP.COMPSLIP,
+        icon: ClipboardList,
+        roles: ["ADMIN"],
+    },
+    {
+        title: "SSP-COLLECTION",
+        href: ROUTES.SSP.COLLECTION,
+        icon: ClipboardList,
+        roles: ["ADMIN"],
+    },
+    {
         title: "Users",
         href: ROUTES.UNAUTHORIZED, // temporary
         icon: Users,

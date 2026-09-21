@@ -80,3 +80,147 @@ model RolePermission {
   @@id([roleId, permissionId])
   @@map("role_permissions")
 }
+
+model Pensioner {
+  id String @id @default(uuid()) @db.Uuid
+
+  legacyPensionerId Int @unique @map("pensioner_id")
+
+  lastName   String  @map("last_name") @db.VarChar(30)
+  firstName  String  @map("first_name") @db.VarChar(40)
+  middleName String? @map("middle_name") @db.VarChar(40)
+
+  birthDate       DateTime  @map("birth_date") @db.Date
+  actualPension   Decimal   @map("actual_pension") @db.Decimal(12, 2)
+  contingencyDate DateTime? @map("contingency_date") @db.Date
+
+  bankName      String? @map("bank_name") @db.VarChar(100)
+  accountNumber String? @map("account_number") @db.VarChar(50)
+
+  computationSlips ComputationSlip[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("pensioners")
+}
+
+model ComputationSlip {
+  id String @id @default(uuid()) @db.Uuid
+
+  counterNumber Int @map("counter_no")
+
+  controlNumber String @map("ctr_no") @db.VarChar(30) // should have composite key branchname CTR-00001
+
+  accountNumber String @map("account_no") @db.VarChar(50) // LN-2026-000123
+
+  branchName String @map("branch_name") @db.VarChar(100)
+
+  pensionerId String @map("pensioner_uuid") @db.Uuid
+
+  pensioner Pensioner @relation(fields: [pensionerId], references: [id], onDelete: Restrict)
+
+  transactionDate DateTime @map("transaction_date") @db.Date
+  effectivityDate DateTime @map("effectivity_date") @db.Date
+
+  transactionType String @map("transaction_type") @db.VarChar(30)
+
+  status LoanStatus @default(ACTIVE)
+
+  installment   Decimal @db.Decimal(12, 2)
+  terms         Int
+  supplementary Decimal @default(0) @db.Decimal(12, 2)
+
+  principalAmount Decimal @map("principal_amount") @db.Decimal(12, 2)
+
+  udi               Decimal @db.Decimal(12, 2)
+  collectionFee     Decimal @map("collection_fee") @db.Decimal(12, 2)
+  processingFee     Decimal @map("processing_fee") @db.Decimal(12, 2)
+  loanProtectionFee Decimal @map("loan_protection_fee") @db.Decimal(12, 2)
+  icod              Decimal @db.Decimal(12, 2)
+
+  grossCashOut Decimal @map("gross_cash_out") @db.Decimal(12, 2)
+  netCashOut   Decimal @map("net_cash_out") @db.Decimal(12, 2)
+  totalCashOut Decimal @map("total_cash_out") @db.Decimal(12, 2)
+
+  renewedFromId String? @map("renewed_from_id") @db.Uuid
+
+  renewedFrom ComputationSlip? @relation("LoanRenewal", fields: [renewedFromId], references: [id], onDelete: Restrict)
+
+  renewals ComputationSlip[] @relation("LoanRenewal")
+
+  closingBalance Decimal?  @map("closing_balance") @db.Decimal(12, 2)
+  closedAt       DateTime? @map("closed_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  loanCollections LoanCollection[]
+
+  @@unique([branchName, counterNumber])
+  @@unique([branchName, controlNumber])
+  @@unique([accountNumber])
+  @@index([status])
+  @@index([renewedFromId])
+  @@index([pensionerId])
+  @@index([transactionDate])
+  @@index([effectivityDate])
+  @@map("computation_slips")
+}
+
+enum LoanStatus {
+  ACTIVE
+  CLOSED
+  RENEWED
+  PAID
+  CANCELLED
+}
+
+model LoanCollection {
+  id String @id @default(uuid()) @db.Uuid
+
+  computationSlipId String @map("computation_slip_id") @db.Uuid
+
+  computationSlip ComputationSlip @relation(fields: [computationSlipId], references: [id], onDelete: Restrict)
+
+  collectionDate DateTime @map("collection_date") @db.Date
+
+  amount Decimal @db.Decimal(12, 2)
+
+  beginningBalance Decimal @map("beginning_balance") @db.Decimal(12, 2)
+  endingBalance    Decimal @map("ending_balance") @db.Decimal(12, 2)
+
+  status CollectionStatus @default(PENDING)
+
+  remarks String? @db.VarChar(255)
+
+  postedAt DateTime? @map("posted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([computationSlipId, collectionDate])
+  @@index([computationSlipId])
+  @@index([collectionDate])
+  @@map("loan_collections")
+}
+
+enum CollectionStatus {
+  PENDING
+  POSTED
+  CANCELLED
+}
+
+model BranchCounter {
+  id String @id @default(uuid()) @db.Uuid
+
+  branchId String @unique @map("branch_id") @db.Uuid
+
+  computationSlipCounter Int @default(0) @map("computation_slip_counter")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("branch_counters")
+}
