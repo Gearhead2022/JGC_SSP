@@ -64,9 +64,8 @@ export default function Modal({
                 flex
                 items-center
                 justify-center
-                bg-black/40
+                bg-black/50
                 p-4
-                backdrop-blur-sm
             "
             onMouseDown={onClose}
         >
@@ -87,7 +86,10 @@ export default function Modal({
                     overflow-hidden
                     rounded-xl
                     bg-white
-                    shadow-xl
+                    shadow-2xl
+                    animate-in
+                    fade-in
+                    zoom-in-95
                     ${sizeClasses[size]}
                 `}
             >
@@ -102,7 +104,7 @@ export default function Modal({
                     ">
                         <h2
                             id="modal-title"
-                            className="text-lg font-semibold text-black"
+                            className="text-lg font-semibold text-slate-700 uppercase"
                         >
                             {title}
                         </h2>
@@ -114,7 +116,7 @@ export default function Modal({
                             className="
                                 rounded-md
                                 p-2
-                                text-gray-500
+                                text-red-500
                                 transition
                                 hover:bg-gray-100
                                 hover:text-gray-900

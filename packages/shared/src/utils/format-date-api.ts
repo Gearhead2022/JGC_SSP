@@ -56,3 +56,24 @@ export function addMonthsToDate(
         )
     );
 }
+
+
+
+export function formatDateApiName(value: string | Date) {
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date: ${value}`);
+  }
+
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const year = date.getFullYear();
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+
+  return `${month} ${day}, ${year}`;
+}
