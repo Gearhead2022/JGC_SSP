@@ -9,6 +9,11 @@ router.get(
 );
 
 router.post(
+    "/calculate",
+    controller.calculateComputationSlip
+);
+
+router.post(
     "/",
     controller.createComputationSlip
 );

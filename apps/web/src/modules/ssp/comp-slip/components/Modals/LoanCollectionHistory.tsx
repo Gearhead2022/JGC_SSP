@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import LoanCollectionHistory from "../../../loan-collection/components/LoanCollectionHistory";
 import { useLoanCollectionHistory } from "../../../loan-collection/hooks/useLoanCollection";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import LoanCollectionScheduleSpreadModal from "./LoanCollectionScheduleSpreadModal";
 import { CompslipListItem, Pensioner } from "@repo/shared";
+
+import LoanCollectionScheduleSpreadModal from "./LoanCollectionScheduleSpreadModal";
+import UDIRebateScheduleSpreadModal from "./UDIScheduleSpreadModal";
+import SupplementaryLoanScheduleSpreadModal from "./SupplementaryLoanScheduleSpreadModal";
 
 type LoanCollectionDetailsModalProps = {
     isOpen: boolean;
@@ -30,6 +33,8 @@ export default function LoanCollectionDetailsModal({
     const { data: collectionHistory = [], isLoading, isError } = useLoanCollectionHistory(computationSlipId ?? undefined);
 
     const collectionSchedulesModal = useDisclosure();
+    const udirebateSchedulesModal = useDisclosure();
+    const supplementaryLoanSchedulesModal = useDisclosure();
 
     return (
         <>
@@ -60,13 +65,27 @@ export default function LoanCollectionDetailsModal({
                         </div>
                     ) : (
                         <>
-                            <div className="space-y-3 text-right mt-[-30]">
+                            <div className="space-y-3 text-right mt-[-30] space-x-2">
                                 <Button
                                     type="button"
                                     className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
                                     onClick={collectionSchedulesModal.open}
                                 >
-                                    View Schedule
+                                    View Loan Schedule
+                                </Button>
+                                <Button
+                                    type="button"
+                                    className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                                    onClick={udirebateSchedulesModal.open}
+                                >
+                                    View UDI Rebate Schedule
+                                </Button>
+                                <Button
+                                    type="button"
+                                    className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                                    onClick={supplementaryLoanSchedulesModal.open}
+                                >
+                                    View SL LOan Schedule
                                 </Button>
                             </div>
                             <LoanCollectionHistory
@@ -104,6 +123,61 @@ export default function LoanCollectionDetailsModal({
                         collectionSchedulesModal.close
                     }
                     accountNumber={accountNumber}
+                    selectedLoan={selectedLoan}
+                />
+            </Modal>
+
+            {/* UDI Rrebate Schedule Modal */}
+            <Modal
+                isOpen={udirebateSchedulesModal.isOpen}
+                onClose={udirebateSchedulesModal.close}
+                title=""
+                size="xl"
+                footer={
+                    <>
+                        <Button
+                            type="button"
+                            onClick={udirebateSchedulesModal.close}
+                        >
+                            Cancel
+                        </Button>
+                    </>
+                }
+            >
+                {/* Collection Schedule Spread */}
+                <UDIRebateScheduleSpreadModal
+                    isOpen={
+                        udirebateSchedulesModal.isOpen
+                    }
+                    onClose={
+                        udirebateSchedulesModal.close
+                    }
+
+                    selectedLoan={selectedLoan}
+                />
+            </Modal>
+
+            {/* Supplementary Loan Schedule Modal */}
+            <Modal
+                isOpen={supplementaryLoanSchedulesModal.isOpen}
+                onClose={supplementaryLoanSchedulesModal.close}
+                title=""
+                size="xl"
+                footer={
+                    <>
+                        <Button
+                            type="button"
+                            onClick={supplementaryLoanSchedulesModal.close}
+                        >
+                            Cancel
+                        </Button>
+                    </>
+                }
+            >
+                {/* Collection Schedule Spread */}
+                <SupplementaryLoanScheduleSpreadModal
+                    isOpen={supplementaryLoanSchedulesModal.isOpen}
+                    onClose={supplementaryLoanSchedulesModal.close}
                     selectedLoan={selectedLoan}
                 />
             </Modal>

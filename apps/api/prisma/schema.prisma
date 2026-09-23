@@ -128,9 +128,10 @@ model ComputationSlip {
 
   status LoanStatus @default(ACTIVE)
 
-  installment   Decimal @db.Decimal(12, 2)
-  terms         Int
-  supplementary Decimal @default(0) @db.Decimal(12, 2)
+  installment          Decimal @db.Decimal(12, 2)
+  terms                Int
+  supplementary        Decimal @default(0) @db.Decimal(12, 2)
+  supplementaryBalance Decimal @default(0) @map("supplementary_balance") @db.Decimal(12, 2)
 
   principalAmount Decimal @map("principal_amount") @db.Decimal(12, 2)
 
@@ -157,7 +158,8 @@ model ComputationSlip {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  loanCollections LoanCollection[]
+  loanCollections         LoanCollection[]
+  supplementaryCollection SupplementaryCollection[]
 
   @@unique([branchName, counterNumber])
   @@unique([branchName, controlNumber])
@@ -223,4 +225,62 @@ model BranchCounter {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("branch_counters")
+}
+
+model SupplementaryCollection {
+  id String @id @default(uuid()) @db.Uuid
+
+  computationSlipId String @map("computation_slip_id") @db.Uuid
+
+  computationSlip ComputationSlip @relation(fields: [computationSlipId], references: [id], onDelete: Restrict)
+
+  collectionDate DateTime @map("collection_date") @db.Date
+
+  // Actual amount paid in this transaction
+  amount Decimal @db.Decimal(12, 2)
+
+  // Supplementary principal balance before payment
+  beginningBalance Decimal @map("beginning_balance") @db.Decimal(12, 2)
+
+  // Supplementary principal balance after payment
+  endingBalance Decimal @map("ending_balance") @db.Decimal(12, 2)
+
+  // Monthly SL charge computed from supplementary balance
+  monthlyCharge Decimal @map("monthly_charge") @db.Decimal(12, 2)
+
+  // Number of chargeable months available at transaction time
+  availableChargeMonths Int @map("available_charge_months")
+
+  // Number of months pensioner chose to pay now
+  paidChargeMonths Int @map("paid_charge_months")
+
+  // Number of unpaid charge months remaining after this transaction
+  remainingChargeMonths Int @map("remaining_charge_months")
+
+  // Total charge due for the selected paid months
+  chargeAmount Decimal @map("charge_amount") @db.Decimal(12, 2)
+
+  // Actual portion of payment applied to charge
+  chargePaid Decimal @map("charge_paid") @db.Decimal(12, 2)
+
+  // Actual portion applied to supplementary principal
+  principalPaid Decimal @map("principal_paid") @db.Decimal(12, 2)
+
+  // charge still unpaid
+  remainingCharge Decimal @default(0) @map("remaining_charge") @db.Decimal(12, 2)
+
+  status CollectionStatus @default(PENDING)
+
+  remarks String? @db.VarChar(255)
+
+  postedAt DateTime? @map("posted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // @@unique([computationSlipId, collectionDate]) //only one supplementary collection can exist per loan account per date.
+  @@index([computationSlipId])
+  @@index([collectionDate])
+  @@map("supplementary_collections")
 }

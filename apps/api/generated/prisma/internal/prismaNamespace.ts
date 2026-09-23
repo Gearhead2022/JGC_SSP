@@ -405,7 +405,8 @@ export const ModelName = {
   Pensioner: 'Pensioner',
   ComputationSlip: 'ComputationSlip',
   LoanCollection: 'LoanCollection',
-  BranchCounter: 'BranchCounter'
+  BranchCounter: 'BranchCounter',
+  SupplementaryCollection: 'SupplementaryCollection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -421,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "permission" | "rolePermission" | "pensioner" | "computationSlip" | "loanCollection" | "branchCounter"
+    modelProps: "user" | "role" | "userRole" | "permission" | "rolePermission" | "pensioner" | "computationSlip" | "loanCollection" | "branchCounter" | "supplementaryCollection"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1091,6 +1092,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupplementaryCollection: {
+      payload: Prisma.$SupplementaryCollectionPayload<ExtArgs>
+      fields: Prisma.SupplementaryCollectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupplementaryCollectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupplementaryCollectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>
+        }
+        findFirst: {
+          args: Prisma.SupplementaryCollectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupplementaryCollectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>
+        }
+        findMany: {
+          args: Prisma.SupplementaryCollectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>[]
+        }
+        create: {
+          args: Prisma.SupplementaryCollectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>
+        }
+        createMany: {
+          args: Prisma.SupplementaryCollectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupplementaryCollectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>[]
+        }
+        delete: {
+          args: Prisma.SupplementaryCollectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>
+        }
+        update: {
+          args: Prisma.SupplementaryCollectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupplementaryCollectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupplementaryCollectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupplementaryCollectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupplementaryCollectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionPayload>
+        }
+        aggregate: {
+          args: Prisma.SupplementaryCollectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplementaryCollection>
+        }
+        groupBy: {
+          args: Prisma.SupplementaryCollectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplementaryCollectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupplementaryCollectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplementaryCollectionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1262,6 +1337,23 @@ export const BranchCounterScalarFieldEnum = {
 } as const
 
 export type BranchCounterScalarFieldEnum = (typeof BranchCounterScalarFieldEnum)[keyof typeof BranchCounterScalarFieldEnum]
+
+
+export const SupplementaryCollectionScalarFieldEnum = {
+  id: 'id',
+  computationSlipId: 'computationSlipId',
+  collectionDate: 'collectionDate',
+  amount: 'amount',
+  beginningBalance: 'beginningBalance',
+  endingBalance: 'endingBalance',
+  status: 'status',
+  remarks: 'remarks',
+  postedAt: 'postedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplementaryCollectionScalarFieldEnum = (typeof SupplementaryCollectionScalarFieldEnum)[keyof typeof SupplementaryCollectionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1558,6 +1650,7 @@ export type GlobalOmitConfig = {
   computationSlip?: Prisma.ComputationSlipOmit
   loanCollection?: Prisma.LoanCollectionOmit
   branchCounter?: Prisma.BranchCounterOmit
+  supplementaryCollection?: Prisma.SupplementaryCollectionOmit
 }
 
 /* Types for Logging */

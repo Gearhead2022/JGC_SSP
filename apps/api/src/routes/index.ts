@@ -4,6 +4,7 @@ import accessControlRoutes from "@/modules/admin/access-control/access-control.r
 import dashboardRoutes from "@/modules/admin/dashboard/dashboard.routes";
 import sspRoutes from "@/modules/ssp/comp-slip/comp-slip.routes";
 import loanCollectionRoutes from "@/modules/ssp/loan-collection/loan-collection.routes";
+import supplementaryCollectionRoutes from "@/modules/ssp/sl-collection/sl-collection.route";
 import { authenticate } from '@/middleware/authenticate.middleware';
 
 const router = Router();
@@ -32,5 +33,11 @@ router.use(
     "/ssp/loan-collections",
     loanCollectionRoutes
 );
+
+router.use(
+    "/ssp/sl-collections",
+    supplementaryCollectionRoutes
+);
+
 
 export default router;

@@ -9,9 +9,11 @@ export * from "./calculations/calculateUDIRebateSchedule";
 export * from "./calculations/calculateUDIRebateAmount";
 export * from "./calculations/loanScheduleSpread";
 export * from "./calculations/calculateRenewalBalance";
+export * from "./calculations/calculateSLToDeductCharge";
+export * from "./calculations/applySupplementaryPayment";
 
 export * from "./rules/getLoanEffectivityDate";
 export * from "./rules/getMaximumSLTerm";
 // export * from "./rules/getMaximumTerm";
 export * from "./rules/getWithdrawalDate";
-// export * from "./rules/isEligibleForRenewal";
+export * from "./rules/isEligibleForRenewal";

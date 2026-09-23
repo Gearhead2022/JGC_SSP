@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as compSlipService from "./comp-slip.service";
 import { sendSuccess } from "@/lib/http/response";
 
-import { createComputationSlipSchema, } from "@repo/shared";
+import { calculateComputationSlipSchema, createComputationSlipSchema, } from "@repo/shared";
 
 
 export async function searchPensionersController(
@@ -17,6 +17,33 @@ export async function searchPensionersController(
 
         sendSuccess(res, pensioners);
 
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function calculateComputationSlip(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    try {
+        const data =
+            calculateComputationSlipSchema.parse(
+                req.body
+            );
+
+        const result =
+            await compSlipService.calculateComputationSlip(
+                data
+            );
+
+        return res.status(200).json({
+            success: true,
+            message:
+                "Computation calculated successfully.",
+            data: result,
+        });
     } catch (error) {
         next(error);
     }

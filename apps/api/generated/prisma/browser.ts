@@ -62,3 +62,8 @@ export type LoanCollection = Prisma.LoanCollectionModel
  * 
  */
 export type BranchCounter = Prisma.BranchCounterModel
+/**
+ * Model SupplementaryCollection
+ * 
+ */
+export type SupplementaryCollection = Prisma.SupplementaryCollectionModel

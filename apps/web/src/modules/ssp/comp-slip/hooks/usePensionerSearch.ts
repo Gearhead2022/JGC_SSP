@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { compSlipService, getActiveLoanByPensionerIdAndAccountNo, getCompslipList, getNextControlNumber, searchPensioners } from "../services/pensioner.service";
+import { calculateComputationSlip, compSlipService, getActiveLoanByPensionerIdAndAccountNo, getCompslipList, getNextControlNumber, searchPensioners } from "../services/pensioner.service";
 
 export function usePensionerSearch(params: { search: string }) {
     return useQuery({
@@ -7,6 +7,13 @@ export function usePensionerSearch(params: { search: string }) {
         queryFn: () => searchPensioners(params.search),
 
         enabled: params.search.trim().length >= 2,
+    });
+}
+
+export function useCalculateComputationSlip() {
+    return useMutation({
+        mutationFn:
+            calculateComputationSlip,
     });
 }
 

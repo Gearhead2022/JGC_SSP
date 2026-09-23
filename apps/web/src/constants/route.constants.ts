@@ -11,5 +11,6 @@ export const ROUTES = {
     SSP: {
         COMPSLIP: "/ssp/comp-slip",
         COLLECTION: "/ssp/loan-collection",
+        SUPPLEMENTARY: "/ssp/supplementary-collection",
     },
 } as const;

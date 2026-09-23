@@ -59,7 +59,8 @@ export const ModelName = {
   Pensioner: 'Pensioner',
   ComputationSlip: 'ComputationSlip',
   LoanCollection: 'LoanCollection',
-  BranchCounter: 'BranchCounter'
+  BranchCounter: 'BranchCounter',
+  SupplementaryCollection: 'SupplementaryCollection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -210,6 +211,23 @@ export const BranchCounterScalarFieldEnum = {
 } as const
 
 export type BranchCounterScalarFieldEnum = (typeof BranchCounterScalarFieldEnum)[keyof typeof BranchCounterScalarFieldEnum]
+
+
+export const SupplementaryCollectionScalarFieldEnum = {
+  id: 'id',
+  computationSlipId: 'computationSlipId',
+  collectionDate: 'collectionDate',
+  amount: 'amount',
+  beginningBalance: 'beginningBalance',
+  endingBalance: 'endingBalance',
+  status: 'status',
+  remarks: 'remarks',
+  postedAt: 'postedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplementaryCollectionScalarFieldEnum = (typeof SupplementaryCollectionScalarFieldEnum)[keyof typeof SupplementaryCollectionScalarFieldEnum]
 
 
 export const SortOrder = {
