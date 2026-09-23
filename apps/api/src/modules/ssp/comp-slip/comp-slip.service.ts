@@ -311,7 +311,7 @@ export async function calculateComputationSlip(
         installment: data.installment,
         terms: data.terms,
         supplementary: data.supplementary,
-        supplementaryBalance: data.supplementaryBalance,
+        supplementaryBalance: totalSupplementaryBalance,
 
         applySupplementaryCharge:
             data.applySupplementaryCharge,
@@ -399,6 +399,9 @@ export async function createComputationSlip(
     return prisma.$transaction(async (tx) => {
 
         if (isRenew) {
+            /**
+            * Regular loan collection
+            */
 
             if (
                 data.shouldCreateSourceCollection &&
@@ -443,21 +446,98 @@ export async function createComputationSlip(
                 );
             }
 
-            await compslipRepository.closeSourceLoan(
-                tx,
-                {
-                    computationSlipId:
-                        data
-                            .renewedFromId!,
+            /**
+            * Supplementary charge collection
+            */
 
-                    closingBalance:
-                        data
-                            .activeLoanBalance,
+            if (
+                data.applySupplementaryCharge &&
+                data.supplementaryChargeToPay > 0 &&
+                data.renewedFromId
+            ) {
+                const supplementaryBeginningBalance =
+                    data.supplementaryBalance;
 
-                    loanStatus:
-                        "RENEWED",
-                }
-            );
+                /**
+                 * For now this transaction only pays
+                 * supplementary charges.
+                 *
+                 * No SL principal reduction yet.
+                 */
+                const supplementaryEndingBalance =
+                    supplementaryBeginningBalance;
+
+                await supplementaryRepository.createPendingSupplementaryCollection(
+                    tx,
+                    {
+                        computationSlipId:
+                            data.renewedFromId,
+
+                        collectionDate:
+                            transactionDate,
+
+                        amount:
+                            data.supplementaryChargeToPay,
+
+                        beginningBalance:
+                            supplementaryBeginningBalance,
+
+                        endingBalance:
+                            supplementaryEndingBalance,
+
+                        monthlyCharge:
+                            data.supplementaryChargeMonthly,
+
+                        availableChargeMonths:
+                            data.supplementaryChargeAvailableMonths,
+
+                        paidChargeMonths:
+                            data.supplementaryChargeMonthsToPay,
+
+                        remainingChargeMonths:
+                            data.supplementaryChargeRemainingMonths,
+
+                        chargeAmount:
+                            data.supplementaryCharge,
+
+                        chargePaid:
+                            data.supplementaryChargeToPay,
+
+                        remainingCharge:
+                            Math.max(
+                                0,
+                                data.supplementaryCharge -
+                                data.supplementaryChargeToPay
+                            ),
+
+                        principalPaid:
+                            0,
+
+                        remarks:
+                            "Supplementary charge generated during renewal",
+                    }
+                );
+
+                /**
+                 * Close source loan
+                 */
+
+                await compslipRepository.closeSourceLoan(
+                    tx,
+                    {
+                        computationSlipId:
+                            data
+                                .renewedFromId!,
+
+                        closingBalance:
+                            data
+                                .activeLoanBalance,
+
+                        loanStatus:
+                            "RENEWED",
+                    }
+                );
+            }
         }
 
         return compslipRepository.createComputationSlip(
@@ -484,6 +564,9 @@ export async function createComputationSlip(
 
                 supplementary:
                     data.supplementary,
+
+                supplementaryBalance:
+                    data.supplementaryBalance,
 
                 principalAmount:
                     data.principalAmount,

@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "LoanStatus" AS ENUM ('ACTIVE', 'CLOSED', 'RENEWED', 'PAID', 'CANCELLED');
+
+-- CreateEnum
+CREATE TYPE "CollectionStatus" AS ENUM ('PENDING', 'POSTED', 'CANCELLED');
+
 -- CreateTable
 CREATE TABLE "users" (
     "user_id" SERIAL NOT NULL,
@@ -82,9 +88,11 @@ CREATE TABLE "computation_slips" (
     "transaction_date" DATE NOT NULL,
     "effectivity_date" DATE NOT NULL,
     "transaction_type" VARCHAR(30) NOT NULL,
+    "status" "LoanStatus" NOT NULL DEFAULT 'ACTIVE',
     "installment" DECIMAL(12,2) NOT NULL,
     "terms" INTEGER NOT NULL,
     "supplementary" DECIMAL(12,2) NOT NULL DEFAULT 0,
+    "supplementary_balance" DECIMAL(12,2) NOT NULL DEFAULT 0,
     "principal_amount" DECIMAL(12,2) NOT NULL,
     "udi" DECIMAL(12,2) NOT NULL,
     "collection_fee" DECIMAL(12,2) NOT NULL,
@@ -95,6 +103,8 @@ CREATE TABLE "computation_slips" (
     "net_cash_out" DECIMAL(12,2) NOT NULL,
     "total_cash_out" DECIMAL(12,2) NOT NULL,
     "renewed_from_id" UUID,
+    "closing_balance" DECIMAL(12,2),
+    "closed_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
@@ -110,7 +120,9 @@ CREATE TABLE "loan_collections" (
     "amount" DECIMAL(12,2) NOT NULL,
     "beginning_balance" DECIMAL(12,2) NOT NULL,
     "ending_balance" DECIMAL(12,2) NOT NULL,
+    "status" "CollectionStatus" NOT NULL DEFAULT 'PENDING',
     "remarks" VARCHAR(255),
+    "posted_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -125,6 +137,31 @@ CREATE TABLE "branch_counters" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "branch_counters_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "supplementary_collections" (
+    "id" UUID NOT NULL,
+    "computation_slip_id" UUID NOT NULL,
+    "collection_date" DATE NOT NULL,
+    "amount" DECIMAL(12,2) NOT NULL,
+    "beginning_balance" DECIMAL(12,2) NOT NULL,
+    "ending_balance" DECIMAL(12,2) NOT NULL,
+    "monthly_charge" DECIMAL(12,2) NOT NULL,
+    "available_charge_months" INTEGER NOT NULL,
+    "paid_charge_months" INTEGER NOT NULL,
+    "remaining_charge_months" INTEGER NOT NULL,
+    "charge_amount" DECIMAL(12,2) NOT NULL,
+    "charge_paid" DECIMAL(12,2) NOT NULL,
+    "principal_paid" DECIMAL(12,2) NOT NULL,
+    "remaining_charge" DECIMAL(12,2) NOT NULL DEFAULT 0,
+    "status" "CollectionStatus" NOT NULL DEFAULT 'PENDING',
+    "remarks" VARCHAR(255),
+    "posted_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "supplementary_collections_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -147,6 +184,9 @@ CREATE UNIQUE INDEX "permissions_name_key" ON "permissions"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "pensioners_pensioner_id_key" ON "pensioners"("pensioner_id");
+
+-- CreateIndex
+CREATE INDEX "computation_slips_status_idx" ON "computation_slips"("status");
 
 -- CreateIndex
 CREATE INDEX "computation_slips_renewed_from_id_idx" ON "computation_slips"("renewed_from_id");
@@ -176,7 +216,16 @@ CREATE INDEX "loan_collections_computation_slip_id_idx" ON "loan_collections"("c
 CREATE INDEX "loan_collections_collection_date_idx" ON "loan_collections"("collection_date");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "loan_collections_computation_slip_id_collection_date_key" ON "loan_collections"("computation_slip_id", "collection_date");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "branch_counters_branch_id_key" ON "branch_counters"("branch_id");
+
+-- CreateIndex
+CREATE INDEX "supplementary_collections_computation_slip_id_idx" ON "supplementary_collections"("computation_slip_id");
+
+-- CreateIndex
+CREATE INDEX "supplementary_collections_collection_date_idx" ON "supplementary_collections"("collection_date");
 
 -- AddForeignKey
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -198,3 +247,6 @@ ALTER TABLE "computation_slips" ADD CONSTRAINT "computation_slips_renewed_from_i
 
 -- AddForeignKey
 ALTER TABLE "loan_collections" ADD CONSTRAINT "loan_collections_computation_slip_id_fkey" FOREIGN KEY ("computation_slip_id") REFERENCES "computation_slips"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "supplementary_collections" ADD CONSTRAINT "supplementary_collections_computation_slip_id_fkey" FOREIGN KEY ("computation_slip_id") REFERENCES "computation_slips"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

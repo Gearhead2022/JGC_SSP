@@ -31,6 +31,7 @@ export type ComputationSlipAvgAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -48,6 +49,7 @@ export type ComputationSlipSumAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -74,6 +76,7 @@ export type ComputationSlipMinAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -105,6 +108,7 @@ export type ComputationSlipMaxAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -136,6 +140,7 @@ export type ComputationSlipCountAggregateOutputType = {
   installment: number
   terms: number
   supplementary: number
+  supplementaryBalance: number
   principalAmount: number
   udi: number
   collectionFee: number
@@ -160,6 +165,7 @@ export type ComputationSlipAvgAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -177,6 +183,7 @@ export type ComputationSlipSumAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -203,6 +210,7 @@ export type ComputationSlipMinAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -234,6 +242,7 @@ export type ComputationSlipMaxAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -265,6 +274,7 @@ export type ComputationSlipCountAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -383,6 +393,7 @@ export type ComputationSlipGroupByOutputType = {
   installment: runtime.Decimal
   terms: number
   supplementary: runtime.Decimal
+  supplementaryBalance: runtime.Decimal
   principalAmount: runtime.Decimal
   udi: runtime.Decimal
   collectionFee: runtime.Decimal
@@ -437,6 +448,7 @@ export type ComputationSlipWhereInput = {
   installment?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -473,6 +485,7 @@ export type ComputationSlipOrderByWithRelationInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -514,6 +527,7 @@ export type ComputationSlipWhereUniqueInput = Prisma.AtLeast<{
   installment?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -550,6 +564,7 @@ export type ComputationSlipOrderByWithAggregationInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -589,6 +604,7 @@ export type ComputationSlipScalarWhereWithAggregatesInput = {
   installment?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntWithAggregatesFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -619,6 +635,7 @@ export type ComputationSlipCreateInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -654,6 +671,7 @@ export type ComputationSlipUncheckedCreateInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -687,6 +705,7 @@ export type ComputationSlipUpdateInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -722,6 +741,7 @@ export type ComputationSlipUncheckedUpdateInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -756,6 +776,7 @@ export type ComputationSlipCreateManyInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -786,6 +807,7 @@ export type ComputationSlipUpdateManyMutationInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -816,6 +838,7 @@ export type ComputationSlipUncheckedUpdateManyInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -872,6 +895,7 @@ export type ComputationSlipCountOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -894,6 +918,7 @@ export type ComputationSlipAvgOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -920,6 +945,7 @@ export type ComputationSlipMaxOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -951,6 +977,7 @@ export type ComputationSlipMinOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -973,6 +1000,7 @@ export type ComputationSlipSumOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -1143,6 +1171,7 @@ export type ComputationSlipCreateWithoutPensionerInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1176,6 +1205,7 @@ export type ComputationSlipUncheckedCreateWithoutPensionerInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1239,6 +1269,7 @@ export type ComputationSlipScalarWhereInput = {
   installment?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1269,6 +1300,7 @@ export type ComputationSlipCreateWithoutRenewalsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1303,6 +1335,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewalsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1340,6 +1373,7 @@ export type ComputationSlipCreateWithoutRenewedFromInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1374,6 +1408,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewedFromInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1427,6 +1462,7 @@ export type ComputationSlipUpdateWithoutRenewalsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1461,6 +1497,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewalsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1509,6 +1546,7 @@ export type ComputationSlipCreateWithoutLoanCollectionsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1543,6 +1581,7 @@ export type ComputationSlipUncheckedCreateWithoutLoanCollectionsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1591,6 +1630,7 @@ export type ComputationSlipUpdateWithoutLoanCollectionsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1625,6 +1665,7 @@ export type ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1657,6 +1698,7 @@ export type ComputationSlipCreateWithoutSupplementaryCollectionInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1691,6 +1733,7 @@ export type ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput = 
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1739,6 +1782,7 @@ export type ComputationSlipUpdateWithoutSupplementaryCollectionInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1773,6 +1817,7 @@ export type ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput = 
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1805,6 +1850,7 @@ export type ComputationSlipCreateManyPensionerInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1835,6 +1881,7 @@ export type ComputationSlipUpdateWithoutPensionerInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1868,6 +1915,7 @@ export type ComputationSlipUncheckedUpdateWithoutPensionerInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1901,6 +1949,7 @@ export type ComputationSlipUncheckedUpdateManyWithoutPensionerInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1932,6 +1981,7 @@ export type ComputationSlipCreateManyRenewedFromInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1961,6 +2011,7 @@ export type ComputationSlipUpdateWithoutRenewedFromInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1995,6 +2046,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewedFromInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2028,6 +2080,7 @@ export type ComputationSlipUncheckedUpdateManyWithoutRenewedFromInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2107,6 +2160,7 @@ export type ComputationSlipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -2144,6 +2198,7 @@ export type ComputationSlipSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -2177,6 +2232,7 @@ export type ComputationSlipSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -2210,6 +2266,7 @@ export type ComputationSlipSelectScalar = {
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -2227,7 +2284,7 @@ export type ComputationSlipSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ComputationSlipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "counterNumber" | "controlNumber" | "accountNumber" | "branchName" | "pensionerId" | "transactionDate" | "effectivityDate" | "transactionType" | "status" | "installment" | "terms" | "supplementary" | "principalAmount" | "udi" | "collectionFee" | "processingFee" | "loanProtectionFee" | "icod" | "grossCashOut" | "netCashOut" | "totalCashOut" | "renewedFromId" | "closingBalance" | "closedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["computationSlip"]>
+export type ComputationSlipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "counterNumber" | "controlNumber" | "accountNumber" | "branchName" | "pensionerId" | "transactionDate" | "effectivityDate" | "transactionType" | "status" | "installment" | "terms" | "supplementary" | "supplementaryBalance" | "principalAmount" | "udi" | "collectionFee" | "processingFee" | "loanProtectionFee" | "icod" | "grossCashOut" | "netCashOut" | "totalCashOut" | "renewedFromId" | "closingBalance" | "closedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["computationSlip"]>
 export type ComputationSlipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pensioner?: boolean | Prisma.PensionerDefaultArgs<ExtArgs>
   renewedFrom?: boolean | Prisma.ComputationSlip$renewedFromArgs<ExtArgs>
@@ -2268,6 +2325,7 @@ export type $ComputationSlipPayload<ExtArgs extends runtime.Types.Extensions.Int
     installment: runtime.Decimal
     terms: number
     supplementary: runtime.Decimal
+    supplementaryBalance: runtime.Decimal
     principalAmount: runtime.Decimal
     udi: runtime.Decimal
     collectionFee: runtime.Decimal
@@ -2724,6 +2782,7 @@ export interface ComputationSlipFieldRefs {
   readonly installment: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly terms: Prisma.FieldRef<"ComputationSlip", 'Int'>
   readonly supplementary: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
+  readonly supplementaryBalance: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly principalAmount: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly udi: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly collectionFee: Prisma.FieldRef<"ComputationSlip", 'Decimal'>

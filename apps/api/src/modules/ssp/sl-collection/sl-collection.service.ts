@@ -18,14 +18,14 @@ export async function createSupplementaryCollection(
      * Check if this month's collection
      * has already been created.
      */
-    const existingCollection = await supplementaeyRepository.findCollectionByDate(
-        data.computationSlipId,
-        collectionDate
-    );
+    // const existingCollection = await supplementaeyRepository.findCollectionByDate(
+    //     data.computationSlipId,
+    //     collectionDate
+    // );
 
-    if (existingCollection) {
-        return existingCollection;
-    }
+    // if (existingCollection) {
+    //     return existingCollection;
+    // }
 
     /*
      * IMPORTANT:
@@ -56,20 +56,20 @@ export async function createSupplementaryCollection(
 
     const endingBalance = Math.max(0, beginningBalance - amount);
 
-    return supplementaeyRepository.createSupplementaryCollection({
-        computationSlipId: data.computationSlipId,
+    // return supplementaeyRepository.createSupplementaryCollection({
+    //     computationSlipId: data.computationSlipId,
 
-        collectionDate,
+    //     collectionDate,
 
-        amount,
+    //     amount,
 
-        beginningBalance,
+    //     beginningBalance,
 
-        endingBalance,
+    //     endingBalance,
 
-        remarks: data.remarks ?? 'Normal Collection',
+    //     remarks: data.remarks ?? 'Normal Collection',
 
-        status: "PENDING",
-    });
+    //     status: "PENDING",
+    // });
 }
 

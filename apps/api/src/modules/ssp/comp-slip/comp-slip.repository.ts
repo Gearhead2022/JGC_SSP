@@ -67,6 +67,7 @@ type CreateComputationSlipData = {
     installment: number;
     terms: number;
     supplementary: number;
+    supplementaryBalance: number;
 
     principalAmount: number;
 
@@ -130,6 +131,8 @@ export async function createComputationSlip(tx: PrismaTx, data: CreateComputatio
 
             supplementary:
                 data.supplementary,
+            supplementaryBalance:
+                data.supplementaryBalance,
 
             principalAmount:
                 data.principalAmount,
