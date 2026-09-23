@@ -41,6 +41,12 @@ export const navigation: NavigationItem[] = [
         roles: ["BRANCH","ADMIN"],
     },
     {
+        title: "SSP-SL-COLLECTION",
+        href: ROUTES.SSP.SUPPLEMENTARY,
+        icon: ClipboardList,
+        roles: ["ADMIN"],
+    },
+    {
         title: "Users",
         href: ROUTES.UNAUTHORIZED, // temporary
         icon: Users,

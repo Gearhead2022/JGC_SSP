@@ -1,5 +1,5 @@
 import api from "@/lib/api/api-client";
-import type { ActiveLoanCollection, ApiResponse, CompslipListItem, ComputationSlipSchema, CreateComputationSlipSchema, Pensioner } from "@repo/shared";
+import type { ActiveLoanCollection, ApiResponse, CalculateComputationSlipSchema, CompslipListItem, ComputationSlipCalculationResult, CreateComputationSlipSchema, Pensioner } from "@repo/shared";
 
 export async function searchPensioners(search: string) {
     const response = await api.get<ApiResponse<Pensioner[]>>(
@@ -9,6 +9,19 @@ export async function searchPensioners(search: string) {
                 search,
             },
         }
+    );
+
+    return response.data;
+}
+
+export async function calculateComputationSlip(
+    data: CalculateComputationSlipSchema
+) {
+    const response = await api.post<
+        ApiResponse<ComputationSlipCalculationResult>
+    >(
+        "/ssp/comp-slip/calculate",
+        data
     );
 
     return response.data;

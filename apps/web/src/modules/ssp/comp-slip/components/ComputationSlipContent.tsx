@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CreateComputationSlipSchema, Pensioner, TRANSACTION_TYPES, ComputationSlipSchema, computationSlipSchema, ActiveLoanCollection, calculateUDIRebateAmount, generateUDIRebateSchedule, CUT_OFF_DATE_UDI, formatDateApi, addMonthsToDate, calculateSourceLoanBalance, isMonthBefore } from "@repo/shared";
+import {
+    CreateComputationSlipSchema, Pensioner, TRANSACTION_TYPES, ActiveLoanCollection, generateUDIRebateSchedule,
+    CUT_OFF_DATE_UDI, formatDateApi, addMonthsToDate, CalculateComputationSlipSchema, LOAN_STATUS_TYPES,
+    calculateComputationSlipSchema,
+    isEligibleForRenewal
+} from "@repo/shared";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -10,24 +15,18 @@ import PensionerSearch from "./PensionerSearch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import {
-    calculateLoanProtectionFee, calculateICOD, calculateCollectionFee, calculateProcessingFee,
-    calculateUDIAmount, calculateLoanEffectivityDate, calculateNetCashOut, generateLoanSchedule,
-    generateSupplementaryLoanSchedule
-} from "@repo/shared"; // logic calculations
+import { generateLoanSchedule, generateSupplementaryLoanSchedule } from "@repo/shared"; // logic calculations
 
 import { getMaximumSLTerm } from "@repo/shared"; // logic rules
 
-import {
-    COLLECTION_FEE, CUT_OFF_DATE_FOR_EFFECTIVITY, ICOD, LOAN_PROTECTION_FEE, PROCESSING_FEE,
-    SL_RATE, UDI_RATE,
-} from "@repo/shared";
+import { SL_RATE } from "@repo/shared";
 
 import { formatNumber } from "@/utils/format-currency";
 import { getAge } from "@repo/shared";
 import { formatDateForInput, formatMonthYear } from "@/utils/format-date";
-import { useActiveLoanByPensionerIdAndAccountNo, useNextControlNumber } from "../hooks/usePensionerSearch";
+import { useActiveLoanByPensionerIdAndAccountNo, useCalculateComputationSlip, useNextControlNumber } from "../hooks/usePensionerSearch";
 import { useActiveLoanCollection } from "../../loan-collection/hooks/useLoanCollection";
+import { Notebook, NotebookIcon } from "lucide-react";
 
 type ComputationSlipContentProps = {
     onCreate?: (data: CreateComputationSlipSchema) => void;
@@ -39,11 +38,6 @@ const MUTED = "text-[#767F79]";
 const HAIRLINE = "border-[#E2E4E1]";
 const DASHED = "border-[#D3D7D4]";
 const ACCENT = "text-[#1F4B3F]";
-
-const fieldClass =
-    "border-0 border-b border-[#D3D7D4] rounded-none bg-green-900/10 px-0 py-1.5 " +
-    "font-mono text-[15px] text-[#1B2430] shadow-none " +
-    "focus-visible:ring-0 focus-visible:border-[#1F4B3F] focus-visible:outline-none";
 
 const labelClass = `font-serif text-[13px] ${MUTED}`;
 
@@ -116,31 +110,46 @@ export default function ComputationSlipContent({
     onCreate,
 }: ComputationSlipContentProps) {
 
+    const { mutateAsync: calculateComputation, data: calculationResponse, isPending: isCalculating, } = useCalculateComputationSlip();
+
+    const computation = calculationResponse?.data;
+
     const {
         register,
         handleSubmit,
         watch,
         setValue,
         formState: { errors },
-    } = useForm<ComputationSlipSchema>({
-        resolver: zodResolver(computationSlipSchema),
+    } = useForm<CalculateComputationSlipSchema>({
+        resolver: zodResolver(calculateComputationSlipSchema),
 
         defaultValues: {
+            pensionerId: "",
+            branchName: "EMB MAIN",
+            accountNumber: undefined,
             transactionDate: "",
             transactionType: TRANSACTION_TYPES.new,
             installment: 0,
             terms: 0,
             supplementary: 0,
+            supplementaryBalance: 0,
+            supplementaryChargeMonthsToPay: 0,
+            applySupplementaryCharge: false,
         },
     });
 
     const [branchName, setBranchName] = useState<string>('EMB MAIN');
     const [selectedPensioner, setSelectedPensioner] = useState<Pensioner | null>(null);
     const [selectedAccountNumber, setSelectedAccountNumber] = useState<string>("");
+    const [supplementaryBalance, setSupplementaryBalance] = useState<number>(0);
 
     const installment = Number(watch("installment")) || 0;
     const loanTerms = Number(watch("terms")) || 0;
     const transactionType = watch("transactionType");
+    // const supplementaryCharge = Number(watch("supplementaryCharge")) || 0;
+    const supplementaryChargeMonthsToPay = Number(watch("supplementaryChargeMonthsToPay")) || 0;
+    const applySupplementaryCharge = watch("applySupplementaryCharge") || false;
+
     const age = getAge(selectedPensioner?.birthDate);
 
     const { data: controlNumberPreview, isLoading: isControlNumberLoading } = useNextControlNumber(branchName);
@@ -150,18 +159,14 @@ export default function ComputationSlipContent({
     const activeLoans = activeLoansList?.data ?? [];
     const activeLoan = activeLoanSelected?.data;
 
-    console.log('loans', activeLoan)
+    // console.log('loans', activeLoan)
 
     useEffect(() => {
         if (
             transactionType === TRANSACTION_TYPES.renew &&
             activeLoan?.installment !== undefined
         ) {
-            setValue(
-                "installment",
-                Number(activeLoan.installment),
-                { shouldValidate: true, }
-            );
+            setValue("installment", Number(activeLoan.installment));
 
             const nextMonthOfLastPaymentDate = addMonthsToDate(
                 new Date(activeLoan.effectivityDate),
@@ -170,210 +175,204 @@ export default function ComputationSlipContent({
 
             const transactionDate = formatDateApi(nextMonthOfLastPaymentDate.toDateString());
 
-            setValue(
-                "transactionDate",
-                transactionDate,
-                { shouldValidate: true, }
-            );
+            setValue("transactionDate", transactionDate);
 
-            setValue(
-                "supplementary",
-                Number(activeLoan.supplementaryBalance),
-                { shouldValidate: true, }
-            );
+            const balance = Number(activeLoan.supplementaryBalance) || 0;
+
+            setSupplementaryBalance(balance);
+
+            setValue("supplementaryBalance", balance);
         }
-    }, [transactionType, activeLoan?.installment, setValue]);
-
-    const paidTermsBeforeRenewal =
-        transactionType === TRANSACTION_TYPES.renew
-            ? activeLoan?.paidTerms ?? 0
-            : 0;
-
-    const applicableCollectionTerms =
-        transactionType === TRANSACTION_TYPES.renew
-            ? paidTermsBeforeRenewal
-            : loanTerms;
+    }, [transactionType, activeLoan?.installment, activeLoan?.effectivityDate, activeLoan?.paidTerms, activeLoan?.supplementaryBalance, setValue]);
 
     const transactionDate = watch("transactionDate");
     const supplementary = Number(watch("supplementary")) || 0;
 
-    const udiRebate =
-        transactionType === TRANSACTION_TYPES.renew
-            ? calculateUDIRebateAmount({
-                originalTransactionDate: new Date(`${activeLoan?.transactionDate}`),
-                renewalTransactionDate: new Date(`${transactionDate}T00:00:00`),
-                udi: Number(activeLoan?.udi),
-                terms: Number(activeLoan?.terms),
-                cutOffDate: CUT_OFF_DATE_UDI
-            })
-            : 0;
+    const udiRebate = computation?.udiRebate ?? 0;
     /**
      * Principal = installment × terms
      */
-    const principalAmount = installment > 0 ? installment * loanTerms : 0;
+    const principalAmount = computation?.principalAmount ?? 0;
 
-    const udi = calculateUDIAmount({
-        principalAmount,
-        rate: UDI_RATE,
-        terms: loanTerms,
-    });
+    const udi = computation?.udi ?? 0;
 
-    const processingFee = calculateProcessingFee({
-        transactionType,
-        terms: applicableCollectionTerms,
-        fees: PROCESSING_FEE,
-        age: Number(age)
-    });
+    const processingFee = computation?.processingFee ?? 0;
 
-    const collectionFee = calculateCollectionFee({
-        transactionType,
-        amountFee: COLLECTION_FEE,
-        terms: applicableCollectionTerms,
-    });
+    const collectionFee = computation?.collectionFee ?? 0;
 
-    const icod = calculateICOD({
-        transactionType,
-        lr: principalAmount,
-        sl: supplementary,
-        percentage: ICOD.percentage,
-        existingAmountFee: ICOD.existingAmountFee,
-        newMaximumFee: ICOD.newMaximumFee,
-        originalTransactionDate: new Date(`${activeLoan?.transactionDate}`),
-        renewalTransactionDate: new Date(`${transactionDate}T00:00:00`),
-    });
+    const icod = computation?.icod ?? 0;
 
-    const loanProtectionFee = calculateLoanProtectionFee({
-        terms: loanTerms,
-        amountFee: LOAN_PROTECTION_FEE,
-    });
+    const loanProtectionFee = computation?.loanProtectionFee ?? 0;
 
-    const effectivityDate = transactionDate
-        ? calculateLoanEffectivityDate({
-            date: new Date(`${transactionDate}T00:00:00`),
-            cutOffDate: CUT_OFF_DATE_FOR_EFFECTIVITY,
-        })
-        : null;
+    const supplementaryCharge =
+        computation?.supplementaryCharge ?? 0;
 
-    const effectivityMonth = effectivityDate
-        ? `${effectivityDate.getFullYear()}-${String(
-            effectivityDate.getMonth() + 1
-        ).padStart(2, "0")}`
-        : "";
+    const supplementaryChargeMonthly =
+        computation?.supplementaryChargeMonthly ?? 0;
 
-    const sourceLoanBalance =
-        transactionType === TRANSACTION_TYPES.renew &&
-            activeLoan &&
-            effectivityDate
-            ? calculateSourceLoanBalance({
-                remainingBalance:
-                    Number(activeLoan.remainingBalance),
+    const supplementaryChargeAvailableMonths =
+        computation?.supplementaryChargeAvailableMonths ?? 0;
 
-                installment:
-                    Number(activeLoan.installment),
+    const supplementaryChargeRemainingMonths =
+        computation?.supplementaryChargeRemainingMonths ?? 0;
 
-                nextCollectionDate:
-                    new Date(
-                        activeLoan.nextCollectionDate
-                    ),
-
-                newEffectivityDate:
-                    effectivityDate,
-            })
-            : {
-                projectedBalance: 0,
-                collectionCount: 0,
-            };
-
-
-
-    const shouldCreateSourceCollection =
-        transactionType === TRANSACTION_TYPES.renew &&
-            activeLoan &&
-            effectivityDate
-            ? isMonthBefore(
-                new Date(activeLoan.nextCollectionDate),
-                effectivityDate
-            )
-            : false;
+    const supplementaryChargeToPay =
+        computation?.supplementaryChargeToPay ?? 0;
 
     const activeLoanBalance =
-        transactionType === TRANSACTION_TYPES.renew &&
-            activeLoan
-            ? shouldCreateSourceCollection
-                ? sourceLoanBalance.projectedBalance
-                : Number(activeLoan.remainingBalance)
-            : 0;
+        computation?.activeLoanBalance ?? 0;
 
-    const CashOut = calculateNetCashOut({
-        transactionType,
-        principalAmount,
-        udi,
-        collectionFee,
-        processingFee,
-        loanProtectionFee,
-        icod,
-        supplementary,
-        activeLoanBalance: activeLoanBalance,
-        udiRebate
-    });
+    const effectivityDate =
+        computation?.effectivityDate
+            ? new Date(computation.effectivityDate)
+            : null;
 
-    const loanSchedule =
-        effectivityDate && loanTerms > 0 && installment && installment > 0 && principalAmount > 0
-            ? generateLoanSchedule({
-                effectivityDate,
-                installment,
-                terms: loanTerms,
-                principalAmount,
-            })
-            : [];
+    const CashOut = {
+        grossCashout: computation?.grossCashOut ?? 0,
+        netCashOut: computation?.netCashOut ?? 0,
+        totalCashOut: computation?.totalCashOut ?? 0,
+    };
 
-    const udiSchedule =
-        effectivityDate && udi > 0 && installment && installment > 0
-            ? generateUDIRebateSchedule({
-                transactionDate: new Date(transactionDate),
-                udi,
-                terms: loanTerms,
-                cutOffDate: CUT_OFF_DATE_UDI,
-            })
-            : [];
+    const loanSchedule = effectivityDate && loanTerms > 0 && installment > 0 && principalAmount > 0
+        ? generateLoanSchedule({
+            effectivityDate,
+            installment,
+            terms: loanTerms,
+            principalAmount,
+        })
+        : [];
+
+    const udiSchedule = transactionDate && udi > 0 && loanTerms > 0
+        ? generateUDIRebateSchedule({
+            transactionDate: new Date(`${transactionDate}T00:00:00`),
+            udi,
+            terms: loanTerms,
+            cutOffDate: CUT_OFF_DATE_UDI,
+        })
+        : [];
 
     const slSchedule =
         effectivityDate && loanTerms > 0 && installment && installment > 0 && supplementary > 0
             ? generateSupplementaryLoanSchedule({
                 effectivityDate,
                 installment,
-                supplementaryAmount: supplementary,
+                supplementaryAmount: supplementary + supplementaryBalance,
                 supplementaryRate: SL_RATE,
             })
             : [];
 
     const totalSupplementaryCharge = slSchedule.reduce((total, item) => total + item.supplementaryCharge, 0);
 
-    async function submit(data: ComputationSlipSchema) {
-        if (!selectedPensioner) {
+    async function submit() {
+        if (!selectedPensioner || !computation
+        ) { return; }
+
+        const payload: CreateComputationSlipSchema = {
+            ...computation,
+
+            pensionerId: selectedPensioner.id,
+            branchName,
+            accountNumber: transactionType === TRANSACTION_TYPES.renew
+                ? selectedAccountNumber
+                : undefined,
+
+            loanStatus: LOAN_STATUS_TYPES.active,
+        };
+
+        onCreate?.(payload);
+    }
+
+    console.log('error', errors)
+
+    useEffect(() => {
+        if (
+            !selectedPensioner ||
+            !transactionDate ||
+            installment <= 0 ||
+            loanTerms <= 0
+        ) {
             return;
         }
 
-        const payload: CreateComputationSlipSchema = {
-            ...data,
-            pensionerId: selectedPensioner.id,
-            effectivityDate: effectivityMonth,
-            branchName,
-            accountNumber:
-                transactionType === TRANSACTION_TYPES.renew
-                    ? selectedAccountNumber
-                    : undefined,
-        };
+        if (
+            transactionType ===
+            TRANSACTION_TYPES.renew &&
+            !selectedAccountNumber
+        ) {
+            return;
+        }
 
-        onCreate?.(payload as CreateComputationSlipSchema);
-    }
+        const timeout = setTimeout(
+            async () => {
+                await calculateComputation({
+                    pensionerId: selectedPensioner.id,
+                    branchName,
+                    accountNumber:
+                        transactionType ===
+                            TRANSACTION_TYPES.renew
+                            ? selectedAccountNumber
+                            : undefined,
+
+                    transactionDate,
+                    transactionType,
+                    installment,
+                    terms: loanTerms,
+                    supplementary,
+                    supplementaryBalance,
+                    supplementaryChargeMonthsToPay,
+                    applySupplementaryCharge
+                });
+            },
+            400
+        );
+
+        return () =>
+            clearTimeout(timeout);
+    }, [
+        selectedPensioner,
+        selectedAccountNumber,
+        branchName,
+        transactionDate,
+        transactionType,
+        installment,
+        loanTerms,
+        supplementary,
+        supplementaryBalance,
+        calculateComputation,
+        supplementaryChargeMonthsToPay,
+        applySupplementaryCharge
+    ]);
 
     function handleSelectPensioner(
         pensioner: Pensioner
     ) {
         setSelectedPensioner(pensioner);
         setSelectedAccountNumber("");
+        setValue("pensionerId", pensioner.id);
+        setValue("accountNumber", undefined);
     }
+
+    function handleAccountChange(
+        accountNumber: string
+    ) {
+        setSelectedAccountNumber(accountNumber);
+        setValue("accountNumber", accountNumber || undefined);
+    }
+
+    const selectedLoan = activeLoans?.find(
+        (loan) => loan.accountNumber === selectedAccountNumber
+    );
+
+    const eligibility =
+        transactionType === TRANSACTION_TYPES.renew && selectedLoan
+            ? isEligibleForRenewal({
+                loanStatus: selectedLoan.loanStatus,
+                paidTerms: selectedLoan.paidTerms,
+                terms: selectedLoan.terms,
+                remainingBalance: selectedLoan.remainingBalance,
+                transactionType
+            })
+            : undefined;
 
     return (
         <div className="space-y-2 py-2">
@@ -452,6 +451,21 @@ export default function ComputationSlipContent({
                             </div>
                         </>
                     )}
+                    {transactionType === TRANSACTION_TYPES.renew &&
+                        eligibility &&
+                        !eligibility.eligible && (
+                            <div className="space-y-10">
+                                <div
+                                    className={`flex items-start gap-3 rounded-sm border ${HAIRLINE} bg-white p-4`}
+                                >
+                                    <NotebookIcon className="mt-0.5 h-5 w-5 shrink-0 text-red-900" />
+
+                                    <p className="text-sm text-red-900">
+                                        {eligibility.reason}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
 
                     {selectedPensioner && (
                         <form id="computation-slip-form" onSubmit={handleSubmit(submit)} className="space-y-8">
@@ -560,7 +574,9 @@ export default function ComputationSlipContent({
                                                 <select
                                                     value={selectedAccountNumber}
                                                     onChange={(event) =>
-                                                        setSelectedAccountNumber(event.target.value)
+                                                        handleAccountChange(
+                                                            event.target.value
+                                                        )
                                                     }
                                                     className={selectFieldClass}
                                                 >
@@ -650,6 +666,75 @@ export default function ComputationSlipContent({
                                                 className={inputFieldClass}
                                             />
                                         </div>
+
+                                        {transactionType === TRANSACTION_TYPES.renew && (
+                                            <div className="col-span-2 flex items-center justify-between rounded-md border border-gray-200 bg-white p-4">
+                                                <div>
+                                                    <Label className={labelClass}>
+                                                        Pay supplementary charge
+                                                    </Label>
+
+                                                    <p className="mt-1 text-xs text-gray-500">
+                                                        Include the selected supplementary charge in this transaction.
+                                                    </p>
+                                                </div>
+
+                                                <input
+                                                    type="checkbox"
+                                                    {...register(
+                                                        "applySupplementaryCharge"
+                                                    )}
+                                                    className="h-4 w-4"
+                                                />
+                                            </div>
+                                        )}
+
+                                        {transactionType === TRANSACTION_TYPES.renew && applySupplementaryCharge && (
+                                            <>
+
+                                                {/* Months to pay */}
+                                                < div >
+                                                    <Label className={labelClass}>Months to pay</Label>
+
+                                                    <Input
+                                                        type="number"
+                                                        {...register("supplementaryChargeMonthsToPay", {
+                                                            valueAsNumber: true,
+                                                        })}
+
+                                                        className={inputFieldClass}
+                                                    />
+                                                </div>
+
+                                                {/* Supplementary Charge */}
+                                                <div>
+                                                    <Label className={labelClass}>
+                                                        Supplementary Charge
+                                                    </Label>
+
+                                                    <div className={calculatedFieldClass}>
+                                                        ₱ {formatNumber(
+                                                            supplementaryCharge
+                                                        )}
+                                                    </div>
+
+                                                    {transactionType ===
+                                                        TRANSACTION_TYPES.renew &&
+                                                        supplementaryChargeAvailableMonths > 0 && (
+                                                            <p className="mt-1 text-xs text-gray-500">
+                                                                ₱
+                                                                {formatNumber(
+                                                                    supplementaryChargeMonthly
+                                                                )}
+                                                                {" per month · "}
+                                                                {supplementaryChargeRemainingMonths}
+                                                                {" month(s) remaining"}
+                                                            </p>
+                                                        )}
+                                                </div>
+                                            </>
+                                        )}
+
                                     </div>
                                 </section>
 
@@ -729,6 +814,36 @@ export default function ComputationSlipContent({
                                                 emphasis
                                             />
 
+                                            <SlipLine
+                                                label="SL monthly charge"
+                                                value={`₱ ${formatNumber(
+                                                    supplementaryChargeMonthly
+                                                )}`}
+                                            />
+
+                                            <SlipLine
+                                                label="SL charge months available"
+                                                value={`${supplementaryChargeAvailableMonths}`}
+                                            />
+
+                                            <SlipLine
+                                                label="SL charge months selected"
+                                                value={`${supplementaryChargeMonthsToPay}`}
+                                            />
+
+                                            <SlipLine
+                                                label="SL charge remaining months"
+                                                value={`${supplementaryChargeRemainingMonths}`}
+                                            />
+
+                                            <SlipLine
+                                                label="SL charge to pay"
+                                                value={`₱ ${formatNumber(
+                                                    supplementaryChargeToPay
+                                                )}`}
+                                                emphasis
+                                            />
+
                                         </div>
 
                                         {/* Grand total — double rule for weight */}
@@ -748,70 +863,72 @@ export default function ComputationSlipContent({
                         </form>
                     )}
                 </div>
-            </div>
+            </div >
 
             {/* Schedules */}
-            {selectedPensioner && (
-                <div className="space-y-10">
-                    <div className={`rounded-sm border ${HAIRLINE} bg-white p-8`}>
-                        <ScheduleTable
-                            title="UDI schedule spread"
-                            columns={["#", "Date", "Unearned", "Earned"]}
-                            rows={udiSchedule.map((item, index) => [
-                                index + 1,
-                                formatMonthYear(item.date),
-                                `₱${formatNumber(item.udiAmount)}`,
-                                `₱${formatNumber(item.udiEarnedAmount)}`,
-                            ])}
-                            emptyMessage="Loan schedule will appear here."
-                        />
-                    </div>
+            {
+                selectedPensioner && (
+                    <div className="space-y-10">
+                        <div className={`rounded-sm border ${HAIRLINE} bg-white p-8`}>
+                            <ScheduleTable
+                                title="UDI schedule spread"
+                                columns={["#", "Date", "Unearned", "Earned"]}
+                                rows={udiSchedule.map((item, index) => [
+                                    index + 1,
+                                    formatMonthYear(item.date),
+                                    `₱${formatNumber(item.udiAmount)}`,
+                                    `₱${formatNumber(item.udiEarnedAmount)}`,
+                                ])}
+                                emptyMessage="Loan schedule will appear here."
+                            />
+                        </div>
 
-                    <div className={`rounded-sm border ${HAIRLINE} bg-white p-8`}>
-                        <ScheduleTable
-                            title="Loan schedule spread"
-                            columns={["#", "Date", "beginning", "Amount", "Balance"]}
-                            rows={loanSchedule.map((item, index) => [
-                                index + 1,
-                                formatMonthYear(item.date),
-                                `₱${formatNumber(item.beginning)}`,
-                                `₱${formatNumber(item.amount)}`,
-                                `₱${formatNumber(item.balance)}`,
-                            ])}
-                            emptyMessage="Loan schedule will appear here."
-                        />
-                    </div>
+                        <div className={`rounded-sm border ${HAIRLINE} bg-white p-8`}>
+                            <ScheduleTable
+                                title="Loan schedule spread"
+                                columns={["#", "Date", "beginning", "Amount", "Balance"]}
+                                rows={loanSchedule.map((item, index) => [
+                                    index + 1,
+                                    formatMonthYear(item.date),
+                                    `₱${formatNumber(item.beginning)}`,
+                                    `₱${formatNumber(item.amount)}`,
+                                    `₱${formatNumber(item.balance)}`,
+                                ])}
+                                emptyMessage="Loan schedule will appear here."
+                            />
+                        </div>
 
-                    <div className={`rounded-sm border ${HAIRLINE} bg-white p-8`}>
-                        <ScheduleTable
-                            title="Supplementary loan schedule spread"
-                            subtitle={
-                                supplementary > 0
-                                    ? `SL ₱${formatNumber(supplementary)} | Total charge ₱${formatNumber(totalSupplementaryCharge)}`
-                                    : undefined
-                            }
-                            columns={[
-                                "#",
-                                "Date",
-                                "Beginning balance",
-                                "Supplementary charge",
-                                "Payment",
-                                "Balance",
-                            ]}
-                            rows={slSchedule.map((item, index) => [
-                                index + 1,
-                                formatMonthYear(item.date),
-                                `₱${formatNumber(item.beginningBalance)}`,
-                                `₱${formatNumber(item.supplementaryCharge)}`,
-                                `₱${formatNumber(item.paymentAmount)}`,
-                                `₱${formatNumber(item.balance)}`,
-                            ])}
-                            emptyMessage="Supplementary loan schedule will appear here."
-                        />
+                        <div className={`rounded-sm border ${HAIRLINE} bg-white p-8`}>
+                            <ScheduleTable
+                                title="Supplementary loan schedule spread"
+                                subtitle={
+                                    supplementary > 0
+                                        ? `SL ₱${formatNumber(supplementary)} | Total charge ₱${formatNumber(totalSupplementaryCharge)}`
+                                        : undefined
+                                }
+                                columns={[
+                                    "#",
+                                    "Date",
+                                    "Beginning balance",
+                                    "Supplementary charge",
+                                    "Payment",
+                                    "Balance",
+                                ]}
+                                rows={slSchedule.map((item, index) => [
+                                    index + 1,
+                                    formatMonthYear(item.date),
+                                    `₱${formatNumber(item.beginningBalance)}`,
+                                    `₱${formatNumber(item.supplementaryCharge)}`,
+                                    `₱${formatNumber(item.paymentAmount)}`,
+                                    `₱${formatNumber(item.balance)}`,
+                                ])}
+                                emptyMessage="Supplementary loan schedule will appear here."
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }
 

@@ -156,10 +156,13 @@ export const MAX_LR_TERM_SL_2 = 10;
 
 export const LOAN_STATUS_TYPES = {
     active: "ACTIVE",
-    renew: "ACTIVE",
+    renewed: "ACTIVE",
     closed: "CLOSED",
-    paid: "PAID"
+    paid: "PAID",
+    cancelled: "CANCELLED"
 } as const;
 
 export type LoanStatusType =
     typeof LOAN_STATUS_TYPES[keyof typeof LOAN_STATUS_TYPES];
+
+export const MINIMUM_PAID_TERMS_FOR_RENEWAL = 1;

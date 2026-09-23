@@ -31,6 +31,7 @@ export type ComputationSlipAvgAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -48,6 +49,7 @@ export type ComputationSlipSumAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -74,6 +76,7 @@ export type ComputationSlipMinAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -105,6 +108,7 @@ export type ComputationSlipMaxAggregateOutputType = {
   installment: runtime.Decimal | null
   terms: number | null
   supplementary: runtime.Decimal | null
+  supplementaryBalance: runtime.Decimal | null
   principalAmount: runtime.Decimal | null
   udi: runtime.Decimal | null
   collectionFee: runtime.Decimal | null
@@ -136,6 +140,7 @@ export type ComputationSlipCountAggregateOutputType = {
   installment: number
   terms: number
   supplementary: number
+  supplementaryBalance: number
   principalAmount: number
   udi: number
   collectionFee: number
@@ -160,6 +165,7 @@ export type ComputationSlipAvgAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -177,6 +183,7 @@ export type ComputationSlipSumAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -203,6 +210,7 @@ export type ComputationSlipMinAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -234,6 +242,7 @@ export type ComputationSlipMaxAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -265,6 +274,7 @@ export type ComputationSlipCountAggregateInputType = {
   installment?: true
   terms?: true
   supplementary?: true
+  supplementaryBalance?: true
   principalAmount?: true
   udi?: true
   collectionFee?: true
@@ -383,6 +393,7 @@ export type ComputationSlipGroupByOutputType = {
   installment: runtime.Decimal
   terms: number
   supplementary: runtime.Decimal
+  supplementaryBalance: runtime.Decimal
   principalAmount: runtime.Decimal
   udi: runtime.Decimal
   collectionFee: runtime.Decimal
@@ -437,6 +448,7 @@ export type ComputationSlipWhereInput = {
   installment?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -456,6 +468,7 @@ export type ComputationSlipWhereInput = {
   renewedFrom?: Prisma.XOR<Prisma.ComputationSlipNullableScalarRelationFilter, Prisma.ComputationSlipWhereInput> | null
   renewals?: Prisma.ComputationSlipListRelationFilter
   loanCollections?: Prisma.LoanCollectionListRelationFilter
+  supplementaryCollection?: Prisma.SupplementaryCollectionListRelationFilter
 }
 
 export type ComputationSlipOrderByWithRelationInput = {
@@ -472,6 +485,7 @@ export type ComputationSlipOrderByWithRelationInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -491,6 +505,7 @@ export type ComputationSlipOrderByWithRelationInput = {
   renewedFrom?: Prisma.ComputationSlipOrderByWithRelationInput
   renewals?: Prisma.ComputationSlipOrderByRelationAggregateInput
   loanCollections?: Prisma.LoanCollectionOrderByRelationAggregateInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionOrderByRelationAggregateInput
 }
 
 export type ComputationSlipWhereUniqueInput = Prisma.AtLeast<{
@@ -512,6 +527,7 @@ export type ComputationSlipWhereUniqueInput = Prisma.AtLeast<{
   installment?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -531,6 +547,7 @@ export type ComputationSlipWhereUniqueInput = Prisma.AtLeast<{
   renewedFrom?: Prisma.XOR<Prisma.ComputationSlipNullableScalarRelationFilter, Prisma.ComputationSlipWhereInput> | null
   renewals?: Prisma.ComputationSlipListRelationFilter
   loanCollections?: Prisma.LoanCollectionListRelationFilter
+  supplementaryCollection?: Prisma.SupplementaryCollectionListRelationFilter
 }, "id" | "branchName_counterNumber" | "branchName_controlNumber" | "accountNumber">
 
 export type ComputationSlipOrderByWithAggregationInput = {
@@ -547,6 +564,7 @@ export type ComputationSlipOrderByWithAggregationInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -586,6 +604,7 @@ export type ComputationSlipScalarWhereWithAggregatesInput = {
   installment?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntWithAggregatesFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalWithAggregatesFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -616,6 +635,7 @@ export type ComputationSlipCreateInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -634,6 +654,7 @@ export type ComputationSlipCreateInput = {
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateInput = {
@@ -650,6 +671,7 @@ export type ComputationSlipUncheckedCreateInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -667,6 +689,7 @@ export type ComputationSlipUncheckedCreateInput = {
   deletedAt?: Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUpdateInput = {
@@ -682,6 +705,7 @@ export type ComputationSlipUpdateInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -700,6 +724,7 @@ export type ComputationSlipUpdateInput = {
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateInput = {
@@ -716,6 +741,7 @@ export type ComputationSlipUncheckedUpdateInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -733,6 +759,7 @@ export type ComputationSlipUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipCreateManyInput = {
@@ -749,6 +776,7 @@ export type ComputationSlipCreateManyInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -779,6 +807,7 @@ export type ComputationSlipUpdateManyMutationInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -809,6 +838,7 @@ export type ComputationSlipUncheckedUpdateManyInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -865,6 +895,7 @@ export type ComputationSlipCountOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -887,6 +918,7 @@ export type ComputationSlipAvgOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -913,6 +945,7 @@ export type ComputationSlipMaxOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -944,6 +977,7 @@ export type ComputationSlipMinOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -966,6 +1000,7 @@ export type ComputationSlipSumOrderByAggregateInput = {
   installment?: Prisma.SortOrder
   terms?: Prisma.SortOrder
   supplementary?: Prisma.SortOrder
+  supplementaryBalance?: Prisma.SortOrder
   principalAmount?: Prisma.SortOrder
   udi?: Prisma.SortOrder
   collectionFee?: Prisma.SortOrder
@@ -1109,6 +1144,20 @@ export type ComputationSlipUpdateOneRequiredWithoutLoanCollectionsNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.ComputationSlipUpdateToOneWithWhereWithoutLoanCollectionsInput, Prisma.ComputationSlipUpdateWithoutLoanCollectionsInput>, Prisma.ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput>
 }
 
+export type ComputationSlipCreateNestedOneWithoutSupplementaryCollectionInput = {
+  create?: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput>
+  connectOrCreate?: Prisma.ComputationSlipCreateOrConnectWithoutSupplementaryCollectionInput
+  connect?: Prisma.ComputationSlipWhereUniqueInput
+}
+
+export type ComputationSlipUpdateOneRequiredWithoutSupplementaryCollectionNestedInput = {
+  create?: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput>
+  connectOrCreate?: Prisma.ComputationSlipCreateOrConnectWithoutSupplementaryCollectionInput
+  upsert?: Prisma.ComputationSlipUpsertWithoutSupplementaryCollectionInput
+  connect?: Prisma.ComputationSlipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ComputationSlipUpdateToOneWithWhereWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUpdateWithoutSupplementaryCollectionInput>, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput>
+}
+
 export type ComputationSlipCreateWithoutPensionerInput = {
   id?: string
   counterNumber: number
@@ -1122,6 +1171,7 @@ export type ComputationSlipCreateWithoutPensionerInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1139,6 +1189,7 @@ export type ComputationSlipCreateWithoutPensionerInput = {
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutPensionerInput = {
@@ -1154,6 +1205,7 @@ export type ComputationSlipUncheckedCreateWithoutPensionerInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1171,6 +1223,7 @@ export type ComputationSlipUncheckedCreateWithoutPensionerInput = {
   deletedAt?: Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutPensionerInput = {
@@ -1216,6 +1269,7 @@ export type ComputationSlipScalarWhereInput = {
   installment?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFilter<"ComputationSlip"> | number
   supplementary?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFilter<"ComputationSlip"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1246,6 +1300,7 @@ export type ComputationSlipCreateWithoutRenewalsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1263,6 +1318,7 @@ export type ComputationSlipCreateWithoutRenewalsInput = {
   pensioner: Prisma.PensionerCreateNestedOneWithoutComputationSlipsInput
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutRenewalsInput = {
@@ -1279,6 +1335,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewalsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1295,6 +1352,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewalsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutRenewalsInput = {
@@ -1315,6 +1373,7 @@ export type ComputationSlipCreateWithoutRenewedFromInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1332,6 +1391,7 @@ export type ComputationSlipCreateWithoutRenewedFromInput = {
   pensioner: Prisma.PensionerCreateNestedOneWithoutComputationSlipsInput
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutRenewedFromInput = {
@@ -1348,6 +1408,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewedFromInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1364,6 +1425,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewedFromInput = {
   deletedAt?: Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutRenewedFromInput = {
@@ -1400,6 +1462,7 @@ export type ComputationSlipUpdateWithoutRenewalsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1417,6 +1480,7 @@ export type ComputationSlipUpdateWithoutRenewalsInput = {
   pensioner?: Prisma.PensionerUpdateOneRequiredWithoutComputationSlipsNestedInput
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutRenewalsInput = {
@@ -1433,6 +1497,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewalsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1449,6 +1514,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewalsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUpsertWithWhereUniqueWithoutRenewedFromInput = {
@@ -1480,6 +1546,7 @@ export type ComputationSlipCreateWithoutLoanCollectionsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1497,6 +1564,7 @@ export type ComputationSlipCreateWithoutLoanCollectionsInput = {
   pensioner: Prisma.PensionerCreateNestedOneWithoutComputationSlipsInput
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutLoanCollectionsInput = {
@@ -1513,6 +1581,7 @@ export type ComputationSlipUncheckedCreateWithoutLoanCollectionsInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1529,6 +1598,7 @@ export type ComputationSlipUncheckedCreateWithoutLoanCollectionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutLoanCollectionsInput = {
@@ -1560,6 +1630,7 @@ export type ComputationSlipUpdateWithoutLoanCollectionsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1577,6 +1648,7 @@ export type ComputationSlipUpdateWithoutLoanCollectionsInput = {
   pensioner?: Prisma.PensionerUpdateOneRequiredWithoutComputationSlipsNestedInput
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput = {
@@ -1593,6 +1665,7 @@ export type ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1609,6 +1682,159 @@ export type ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+}
+
+export type ComputationSlipCreateWithoutSupplementaryCollectionInput = {
+  id?: string
+  counterNumber: number
+  controlNumber: string
+  accountNumber: string
+  branchName: string
+  transactionDate: Date | string
+  effectivityDate: Date | string
+  transactionType: string
+  status?: $Enums.LoanStatus
+  installment: runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms: number
+  supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi: runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  closingBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  pensioner: Prisma.PensionerCreateNestedOneWithoutComputationSlipsInput
+  renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
+  renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
+  loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+}
+
+export type ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput = {
+  id?: string
+  counterNumber: number
+  controlNumber: string
+  accountNumber: string
+  branchName: string
+  pensionerId: string
+  transactionDate: Date | string
+  effectivityDate: Date | string
+  transactionType: string
+  status?: $Enums.LoanStatus
+  installment: runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms: number
+  supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi: runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  renewedFromId?: string | null
+  closingBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
+  loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+}
+
+export type ComputationSlipCreateOrConnectWithoutSupplementaryCollectionInput = {
+  where: Prisma.ComputationSlipWhereUniqueInput
+  create: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput>
+}
+
+export type ComputationSlipUpsertWithoutSupplementaryCollectionInput = {
+  update: Prisma.XOR<Prisma.ComputationSlipUpdateWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput>
+  create: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput>
+  where?: Prisma.ComputationSlipWhereInput
+}
+
+export type ComputationSlipUpdateToOneWithWhereWithoutSupplementaryCollectionInput = {
+  where?: Prisma.ComputationSlipWhereInput
+  data: Prisma.XOR<Prisma.ComputationSlipUpdateWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput>
+}
+
+export type ComputationSlipUpdateWithoutSupplementaryCollectionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  counterNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  controlNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  accountNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  branchName?: Prisma.StringFieldUpdateOperationsInput | string
+  transactionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectivityDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactionType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumLoanStatusFieldUpdateOperationsInput | $Enums.LoanStatus
+  installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms?: Prisma.IntFieldUpdateOperationsInput | number
+  supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  closingBalance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pensioner?: Prisma.PensionerUpdateOneRequiredWithoutComputationSlipsNestedInput
+  renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
+  renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
+  loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+}
+
+export type ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  counterNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  controlNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  accountNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  branchName?: Prisma.StringFieldUpdateOperationsInput | string
+  pensionerId?: Prisma.StringFieldUpdateOperationsInput | string
+  transactionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectivityDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactionType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumLoanStatusFieldUpdateOperationsInput | $Enums.LoanStatus
+  installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms?: Prisma.IntFieldUpdateOperationsInput | number
+  supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  renewedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closingBalance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
+  loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipCreateManyPensionerInput = {
@@ -1624,6 +1850,7 @@ export type ComputationSlipCreateManyPensionerInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1654,6 +1881,7 @@ export type ComputationSlipUpdateWithoutPensionerInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1671,6 +1899,7 @@ export type ComputationSlipUpdateWithoutPensionerInput = {
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutPensionerInput = {
@@ -1686,6 +1915,7 @@ export type ComputationSlipUncheckedUpdateWithoutPensionerInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1703,6 +1933,7 @@ export type ComputationSlipUncheckedUpdateWithoutPensionerInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateManyWithoutPensionerInput = {
@@ -1718,6 +1949,7 @@ export type ComputationSlipUncheckedUpdateManyWithoutPensionerInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1749,6 +1981,7 @@ export type ComputationSlipCreateManyRenewedFromInput = {
   installment: runtime.Decimal | runtime.DecimalJsLike | number | string
   terms: number
   supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   udi: runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1778,6 +2011,7 @@ export type ComputationSlipUpdateWithoutRenewedFromInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1795,6 +2029,7 @@ export type ComputationSlipUpdateWithoutRenewedFromInput = {
   pensioner?: Prisma.PensionerUpdateOneRequiredWithoutComputationSlipsNestedInput
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutRenewedFromInput = {
@@ -1811,6 +2046,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewedFromInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1827,6 +2063,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewedFromInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateManyWithoutRenewedFromInput = {
@@ -1843,6 +2080,7 @@ export type ComputationSlipUncheckedUpdateManyWithoutRenewedFromInput = {
   installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   terms?: Prisma.IntFieldUpdateOperationsInput | number
   supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1867,11 +2105,13 @@ export type ComputationSlipUncheckedUpdateManyWithoutRenewedFromInput = {
 export type ComputationSlipCountOutputType = {
   renewals: number
   loanCollections: number
+  supplementaryCollection: number
 }
 
 export type ComputationSlipCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   renewals?: boolean | ComputationSlipCountOutputTypeCountRenewalsArgs
   loanCollections?: boolean | ComputationSlipCountOutputTypeCountLoanCollectionsArgs
+  supplementaryCollection?: boolean | ComputationSlipCountOutputTypeCountSupplementaryCollectionArgs
 }
 
 /**
@@ -1898,6 +2138,13 @@ export type ComputationSlipCountOutputTypeCountLoanCollectionsArgs<ExtArgs exten
   where?: Prisma.LoanCollectionWhereInput
 }
 
+/**
+ * ComputationSlipCountOutputType without action
+ */
+export type ComputationSlipCountOutputTypeCountSupplementaryCollectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplementaryCollectionWhereInput
+}
+
 
 export type ComputationSlipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1913,6 +2160,7 @@ export type ComputationSlipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -1932,6 +2180,7 @@ export type ComputationSlipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   renewedFrom?: boolean | Prisma.ComputationSlip$renewedFromArgs<ExtArgs>
   renewals?: boolean | Prisma.ComputationSlip$renewalsArgs<ExtArgs>
   loanCollections?: boolean | Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs>
+  supplementaryCollection?: boolean | Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs>
   _count?: boolean | Prisma.ComputationSlipCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["computationSlip"]>
 
@@ -1949,6 +2198,7 @@ export type ComputationSlipSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -1982,6 +2232,7 @@ export type ComputationSlipSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -2015,6 +2266,7 @@ export type ComputationSlipSelectScalar = {
   installment?: boolean
   terms?: boolean
   supplementary?: boolean
+  supplementaryBalance?: boolean
   principalAmount?: boolean
   udi?: boolean
   collectionFee?: boolean
@@ -2032,12 +2284,13 @@ export type ComputationSlipSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ComputationSlipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "counterNumber" | "controlNumber" | "accountNumber" | "branchName" | "pensionerId" | "transactionDate" | "effectivityDate" | "transactionType" | "status" | "installment" | "terms" | "supplementary" | "principalAmount" | "udi" | "collectionFee" | "processingFee" | "loanProtectionFee" | "icod" | "grossCashOut" | "netCashOut" | "totalCashOut" | "renewedFromId" | "closingBalance" | "closedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["computationSlip"]>
+export type ComputationSlipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "counterNumber" | "controlNumber" | "accountNumber" | "branchName" | "pensionerId" | "transactionDate" | "effectivityDate" | "transactionType" | "status" | "installment" | "terms" | "supplementary" | "supplementaryBalance" | "principalAmount" | "udi" | "collectionFee" | "processingFee" | "loanProtectionFee" | "icod" | "grossCashOut" | "netCashOut" | "totalCashOut" | "renewedFromId" | "closingBalance" | "closedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["computationSlip"]>
 export type ComputationSlipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pensioner?: boolean | Prisma.PensionerDefaultArgs<ExtArgs>
   renewedFrom?: boolean | Prisma.ComputationSlip$renewedFromArgs<ExtArgs>
   renewals?: boolean | Prisma.ComputationSlip$renewalsArgs<ExtArgs>
   loanCollections?: boolean | Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs>
+  supplementaryCollection?: boolean | Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs>
   _count?: boolean | Prisma.ComputationSlipCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ComputationSlipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2056,6 +2309,7 @@ export type $ComputationSlipPayload<ExtArgs extends runtime.Types.Extensions.Int
     renewedFrom: Prisma.$ComputationSlipPayload<ExtArgs> | null
     renewals: Prisma.$ComputationSlipPayload<ExtArgs>[]
     loanCollections: Prisma.$LoanCollectionPayload<ExtArgs>[]
+    supplementaryCollection: Prisma.$SupplementaryCollectionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2071,6 +2325,7 @@ export type $ComputationSlipPayload<ExtArgs extends runtime.Types.Extensions.Int
     installment: runtime.Decimal
     terms: number
     supplementary: runtime.Decimal
+    supplementaryBalance: runtime.Decimal
     principalAmount: runtime.Decimal
     udi: runtime.Decimal
     collectionFee: runtime.Decimal
@@ -2484,6 +2739,7 @@ export interface Prisma__ComputationSlipClient<T, Null = never, ExtArgs extends 
   renewedFrom<T extends Prisma.ComputationSlip$renewedFromArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$renewedFromArgs<ExtArgs>>): Prisma.Prisma__ComputationSlipClient<runtime.Types.Result.GetResult<Prisma.$ComputationSlipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   renewals<T extends Prisma.ComputationSlip$renewalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$renewalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ComputationSlipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   loanCollections<T extends Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LoanCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supplementaryCollection<T extends Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplementaryCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2526,6 +2782,7 @@ export interface ComputationSlipFieldRefs {
   readonly installment: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly terms: Prisma.FieldRef<"ComputationSlip", 'Int'>
   readonly supplementary: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
+  readonly supplementaryBalance: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly principalAmount: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly udi: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
   readonly collectionFee: Prisma.FieldRef<"ComputationSlip", 'Decimal'>
@@ -3006,6 +3263,30 @@ export type ComputationSlip$loanCollectionsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.LoanCollectionScalarFieldEnum | Prisma.LoanCollectionScalarFieldEnum[]
+}
+
+/**
+ * ComputationSlip.supplementaryCollection
+ */
+export type ComputationSlip$supplementaryCollectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupplementaryCollection
+   */
+  select?: Prisma.SupplementaryCollectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupplementaryCollection
+   */
+  omit?: Prisma.SupplementaryCollectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplementaryCollectionInclude<ExtArgs> | null
+  where?: Prisma.SupplementaryCollectionWhereInput
+  orderBy?: Prisma.SupplementaryCollectionOrderByWithRelationInput | Prisma.SupplementaryCollectionOrderByWithRelationInput[]
+  cursor?: Prisma.SupplementaryCollectionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplementaryCollectionScalarFieldEnum | Prisma.SupplementaryCollectionScalarFieldEnum[]
 }
 
 /**

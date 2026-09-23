@@ -1,0 +1,1 @@
+export { default as SupplementaryCollectionView } from "./views/SupplementaryView";

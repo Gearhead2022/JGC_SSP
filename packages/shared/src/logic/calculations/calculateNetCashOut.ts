@@ -17,6 +17,7 @@ type CalculateNetCashOutParams = {
     supplementary?: number;
     activeLoanBalance?: number;
     udiRebate?: number;
+    supplementaryCharge?: number;
 };
 
 export function calculateNetCashOut({
@@ -30,6 +31,7 @@ export function calculateNetCashOut({
     supplementary = 0,
     activeLoanBalance = 0,
     udiRebate = 0,
+    supplementaryCharge = 0,
 }: CalculateNetCashOutParams): CashOutItem {
     const grossCashout =
         principalAmount -
@@ -43,8 +45,10 @@ export function calculateNetCashOut({
         icod;
     const total = netCashOut + supplementary;
 
-
-    const totalCashOut = transactionType === TRANSACTION_TYPES.renew ? (total + udiRebate) - activeLoanBalance : (total + udiRebate);
+    const totalCashOut =
+        transactionType === TRANSACTION_TYPES.renew
+            ? total + udiRebate - activeLoanBalance - supplementaryCharge
+            : total + udiRebate - supplementaryCharge;
 
     return {
         grossCashout: roundMoney(grossCashout),
