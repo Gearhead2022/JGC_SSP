@@ -21,7 +21,6 @@ type TableHeaderProps = {
 export function TableHeader({
     title,
     description,
-
     search,
     searchPlaceholder = "Search...",
     onSearchChange,
@@ -53,7 +52,7 @@ export function TableHeader({
                 </div>
             )}
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-y-3 gap-x-8">
                 {limit !== undefined && onLimitChange && (
                     <div className="flex items-center text-sm text-gray-600">
                         <span className="mr-2">
@@ -68,9 +67,9 @@ export function TableHeader({
                             }}
                         />
 
-                        <span className="ml-2">
+                        {/* <span className="ml-2">
                             Entries
-                        </span>
+                        </span> */}
                     </div>
                 )}
 
