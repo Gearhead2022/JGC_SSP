@@ -310,7 +310,7 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
 
         supplementaryBalance:
             Number(
-                computationSlip.supplementary
+                computationSlip.supplementaryBalance
             ),
     };
 }
@@ -353,3 +353,5 @@ export async function postLoanCollection(
         collectionId
     );
 }
+
+

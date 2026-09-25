@@ -4,11 +4,8 @@ import accessControlRoutes from "@/modules/admin/access-control/access-control.r
 import dashboardRoutes from "@/modules/admin/dashboard/dashboard.routes";
 import sspRoutes from "@/modules/ssp/comp-slip/comp-slip.routes";
 import loanCollectionRoutes from "@/modules/ssp/loan-collection/loan-collection.routes";
-<<<<<<< HEAD
 import PensionerListRoutes from "@/modules/pensioner/pensioner_list/pensioner_list.routes";
-=======
 import supplementaryCollectionRoutes from "@/modules/ssp/sl-collection/sl-collection.route";
->>>>>>> 175bdfda472426dda3e630387078fcb96cb269c9
 import { authenticate } from '@/middleware/authenticate.middleware';
 
 const router = Router();

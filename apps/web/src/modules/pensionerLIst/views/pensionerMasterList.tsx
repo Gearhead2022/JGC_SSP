@@ -1,11 +1,10 @@
 'use client';
 import Modal from "@/components/common/ModalHeader";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { formatDateApi, formatDateApiName, PensionerSchema,type PensionerSchemaType,UpdatePensionerSchemaType} from "@repo/shared";
+import {  formatDateApiName,type PensionerSchemaType,UpdatePensionerSchemaType} from "@repo/shared";
 import { useState } from "react";
 import PensionerAddModal from "../components/modal/addPensioner";
 import SweetAlert from "@/lib/alerts/alert";
-import Swal from "sweetalert2";
 import { useCreatePensioner, useGetPensioner } from "../hooks/usePensionerList";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Table, TableColumn } from "@/components/common/Table";

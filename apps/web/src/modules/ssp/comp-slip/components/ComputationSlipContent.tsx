@@ -252,7 +252,7 @@ export default function ComputationSlipContent({
         : [];
 
     const slSchedule =
-        effectivityDate && loanTerms > 0 && installment && installment > 0 && supplementary > 0
+        effectivityDate && loanTerms > 0 && installment && installment > 0
             ? generateSupplementaryLoanSchedule({
                 effectivityDate,
                 installment,
@@ -925,6 +925,7 @@ export default function ComputationSlipContent({
                                 emptyMessage="Supplementary loan schedule will appear here."
                             />
                         </div>
+                 
                     </div>
                 )
             }

@@ -119,6 +119,7 @@ export type CompslipListItem = {
     installment: number | string;
     terms: number;
     supplementary: number | string;
+    supplementaryBalance: number | string;
 
     principalAmount: number | string;
 

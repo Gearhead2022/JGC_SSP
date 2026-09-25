@@ -33,7 +33,7 @@ export default function SupplementaryLoanScheduleSpreadModal({
             ? generateSupplementaryLoanSchedule({
                 effectivityDate: new Date(selectedLoan.effectivityDate),
                 installment: Number(selectedLoan.installment),
-                supplementaryAmount: Number(selectedLoan.supplementary),
+                supplementaryAmount: Number(selectedLoan.supplementaryBalance),
                 supplementaryRate: SL_RATE
             })
             : [];
