@@ -1,10 +1,10 @@
 import { addMonthsToDate, dateStringToUtcDate, type CreateLoanCollectionSchema } from "@repo/shared";
-import * as supplementaeyRepository from "./sl-collection.repository";
+import * as supplementaryRepository from "./sl-collection.repository";
 
 export async function createSupplementaryCollection(
     data: CreateLoanCollectionSchema
 ) {
-    const computationSlip = await supplementaeyRepository.findComputationSlipById(data.computationSlipId);
+    const computationSlip = await supplementaryRepository.findComputationSlipById(data.computationSlipId);
 
     if (!computationSlip) {
         throw new Error(
@@ -33,7 +33,7 @@ export async function createSupplementaryCollection(
      * POSTED collections only.
      */
     const latestPostedCollection =
-        await supplementaeyRepository.findLatestPostedCollection(
+        await supplementaryRepository.findLatestPostedSupplementaryCollection(
             data.computationSlipId
         );
 

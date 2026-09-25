@@ -406,7 +406,8 @@ export const ModelName = {
   ComputationSlip: 'ComputationSlip',
   LoanCollection: 'LoanCollection',
   BranchCounter: 'BranchCounter',
-  SupplementaryCollection: 'SupplementaryCollection'
+  SupplementaryCollection: 'SupplementaryCollection',
+  SupplementaryCharge: 'SupplementaryCharge'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -422,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "permission" | "rolePermission" | "pensioner" | "computationSlip" | "loanCollection" | "branchCounter" | "supplementaryCollection"
+    modelProps: "user" | "role" | "userRole" | "permission" | "rolePermission" | "pensioner" | "computationSlip" | "loanCollection" | "branchCounter" | "supplementaryCollection" | "supplementaryCharge"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1166,6 +1167,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupplementaryCharge: {
+      payload: Prisma.$SupplementaryChargePayload<ExtArgs>
+      fields: Prisma.SupplementaryChargeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupplementaryChargeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupplementaryChargeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>
+        }
+        findFirst: {
+          args: Prisma.SupplementaryChargeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupplementaryChargeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>
+        }
+        findMany: {
+          args: Prisma.SupplementaryChargeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>[]
+        }
+        create: {
+          args: Prisma.SupplementaryChargeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>
+        }
+        createMany: {
+          args: Prisma.SupplementaryChargeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupplementaryChargeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>[]
+        }
+        delete: {
+          args: Prisma.SupplementaryChargeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>
+        }
+        update: {
+          args: Prisma.SupplementaryChargeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>
+        }
+        deleteMany: {
+          args: Prisma.SupplementaryChargeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupplementaryChargeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupplementaryChargeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>[]
+        }
+        upsert: {
+          args: Prisma.SupplementaryChargeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryChargePayload>
+        }
+        aggregate: {
+          args: Prisma.SupplementaryChargeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplementaryCharge>
+        }
+        groupBy: {
+          args: Prisma.SupplementaryChargeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplementaryChargeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupplementaryChargeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplementaryChargeCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1347,7 +1422,6 @@ export const SupplementaryCollectionScalarFieldEnum = {
   amount: 'amount',
   beginningBalance: 'beginningBalance',
   endingBalance: 'endingBalance',
-  monthlyCharge: 'monthlyCharge',
   availableChargeMonths: 'availableChargeMonths',
   paidChargeMonths: 'paidChargeMonths',
   remainingChargeMonths: 'remainingChargeMonths',
@@ -1363,6 +1437,22 @@ export const SupplementaryCollectionScalarFieldEnum = {
 } as const
 
 export type SupplementaryCollectionScalarFieldEnum = (typeof SupplementaryCollectionScalarFieldEnum)[keyof typeof SupplementaryCollectionScalarFieldEnum]
+
+
+export const SupplementaryChargeScalarFieldEnum = {
+  id: 'id',
+  computationSlipId: 'computationSlipId',
+  chargeMonth: 'chargeMonth',
+  principalBasis: 'principalBasis',
+  rate: 'rate',
+  chargeAmount: 'chargeAmount',
+  paidAmount: 'paidAmount',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplementaryChargeScalarFieldEnum = (typeof SupplementaryChargeScalarFieldEnum)[keyof typeof SupplementaryChargeScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1483,6 +1573,20 @@ export type EnumCollectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'CollectionStatus[]'
  */
 export type ListEnumCollectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CollectionStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SupplementaryChargeStatus'
+ */
+export type EnumSupplementaryChargeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupplementaryChargeStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SupplementaryChargeStatus[]'
+ */
+export type ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupplementaryChargeStatus[]'>
     
 
 
@@ -1660,6 +1764,7 @@ export type GlobalOmitConfig = {
   loanCollection?: Prisma.LoanCollectionOmit
   branchCounter?: Prisma.BranchCounterOmit
   supplementaryCollection?: Prisma.SupplementaryCollectionOmit
+  supplementaryCharge?: Prisma.SupplementaryChargeOmit
 }
 
 /* Types for Logging */

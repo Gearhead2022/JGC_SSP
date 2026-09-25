@@ -120,6 +120,8 @@ export type CompslipListItem = {
     terms: number;
     supplementary: number | string;
 
+    supplementaryBalance: number | string;
+
     principalAmount: number | string;
 
     udi: number | string;

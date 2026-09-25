@@ -469,6 +469,7 @@ export type ComputationSlipWhereInput = {
   renewals?: Prisma.ComputationSlipListRelationFilter
   loanCollections?: Prisma.LoanCollectionListRelationFilter
   supplementaryCollection?: Prisma.SupplementaryCollectionListRelationFilter
+  supplementaryCharges?: Prisma.SupplementaryChargeListRelationFilter
 }
 
 export type ComputationSlipOrderByWithRelationInput = {
@@ -506,6 +507,7 @@ export type ComputationSlipOrderByWithRelationInput = {
   renewals?: Prisma.ComputationSlipOrderByRelationAggregateInput
   loanCollections?: Prisma.LoanCollectionOrderByRelationAggregateInput
   supplementaryCollection?: Prisma.SupplementaryCollectionOrderByRelationAggregateInput
+  supplementaryCharges?: Prisma.SupplementaryChargeOrderByRelationAggregateInput
 }
 
 export type ComputationSlipWhereUniqueInput = Prisma.AtLeast<{
@@ -548,6 +550,7 @@ export type ComputationSlipWhereUniqueInput = Prisma.AtLeast<{
   renewals?: Prisma.ComputationSlipListRelationFilter
   loanCollections?: Prisma.LoanCollectionListRelationFilter
   supplementaryCollection?: Prisma.SupplementaryCollectionListRelationFilter
+  supplementaryCharges?: Prisma.SupplementaryChargeListRelationFilter
 }, "id" | "branchName_counterNumber" | "branchName_controlNumber" | "accountNumber">
 
 export type ComputationSlipOrderByWithAggregationInput = {
@@ -655,6 +658,7 @@ export type ComputationSlipCreateInput = {
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateInput = {
@@ -690,6 +694,7 @@ export type ComputationSlipUncheckedCreateInput = {
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUpdateInput = {
@@ -725,6 +730,7 @@ export type ComputationSlipUpdateInput = {
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateInput = {
@@ -760,6 +766,7 @@ export type ComputationSlipUncheckedUpdateInput = {
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipCreateManyInput = {
@@ -1158,6 +1165,20 @@ export type ComputationSlipUpdateOneRequiredWithoutSupplementaryCollectionNested
   update?: Prisma.XOR<Prisma.XOR<Prisma.ComputationSlipUpdateToOneWithWhereWithoutSupplementaryCollectionInput, Prisma.ComputationSlipUpdateWithoutSupplementaryCollectionInput>, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput>
 }
 
+export type ComputationSlipCreateNestedOneWithoutSupplementaryChargesInput = {
+  create?: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryChargesInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryChargesInput>
+  connectOrCreate?: Prisma.ComputationSlipCreateOrConnectWithoutSupplementaryChargesInput
+  connect?: Prisma.ComputationSlipWhereUniqueInput
+}
+
+export type ComputationSlipUpdateOneRequiredWithoutSupplementaryChargesNestedInput = {
+  create?: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryChargesInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryChargesInput>
+  connectOrCreate?: Prisma.ComputationSlipCreateOrConnectWithoutSupplementaryChargesInput
+  upsert?: Prisma.ComputationSlipUpsertWithoutSupplementaryChargesInput
+  connect?: Prisma.ComputationSlipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ComputationSlipUpdateToOneWithWhereWithoutSupplementaryChargesInput, Prisma.ComputationSlipUpdateWithoutSupplementaryChargesInput>, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryChargesInput>
+}
+
 export type ComputationSlipCreateWithoutPensionerInput = {
   id?: string
   counterNumber: number
@@ -1190,6 +1211,7 @@ export type ComputationSlipCreateWithoutPensionerInput = {
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutPensionerInput = {
@@ -1224,6 +1246,7 @@ export type ComputationSlipUncheckedCreateWithoutPensionerInput = {
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutPensionerInput = {
@@ -1319,6 +1342,7 @@ export type ComputationSlipCreateWithoutRenewalsInput = {
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutRenewalsInput = {
@@ -1353,6 +1377,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewalsInput = {
   deletedAt?: Date | string | null
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutRenewalsInput = {
@@ -1392,6 +1417,7 @@ export type ComputationSlipCreateWithoutRenewedFromInput = {
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutRenewedFromInput = {
@@ -1426,6 +1452,7 @@ export type ComputationSlipUncheckedCreateWithoutRenewedFromInput = {
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutRenewedFromInput = {
@@ -1481,6 +1508,7 @@ export type ComputationSlipUpdateWithoutRenewalsInput = {
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutRenewalsInput = {
@@ -1515,6 +1543,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewalsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUpsertWithWhereUniqueWithoutRenewedFromInput = {
@@ -1565,6 +1594,7 @@ export type ComputationSlipCreateWithoutLoanCollectionsInput = {
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutLoanCollectionsInput = {
@@ -1599,6 +1629,7 @@ export type ComputationSlipUncheckedCreateWithoutLoanCollectionsInput = {
   deletedAt?: Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutLoanCollectionsInput = {
@@ -1649,6 +1680,7 @@ export type ComputationSlipUpdateWithoutLoanCollectionsInput = {
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput = {
@@ -1683,6 +1715,7 @@ export type ComputationSlipUncheckedUpdateWithoutLoanCollectionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipCreateWithoutSupplementaryCollectionInput = {
@@ -1717,6 +1750,7 @@ export type ComputationSlipCreateWithoutSupplementaryCollectionInput = {
   renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
   renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput = {
@@ -1751,6 +1785,7 @@ export type ComputationSlipUncheckedCreateWithoutSupplementaryCollectionInput = 
   deletedAt?: Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
   loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedCreateNestedManyWithoutComputationSlipInput
 }
 
 export type ComputationSlipCreateOrConnectWithoutSupplementaryCollectionInput = {
@@ -1801,6 +1836,7 @@ export type ComputationSlipUpdateWithoutSupplementaryCollectionInput = {
   renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput = {
@@ -1835,6 +1871,163 @@ export type ComputationSlipUncheckedUpdateWithoutSupplementaryCollectionInput = 
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedUpdateManyWithoutComputationSlipNestedInput
+}
+
+export type ComputationSlipCreateWithoutSupplementaryChargesInput = {
+  id?: string
+  counterNumber: number
+  controlNumber: string
+  accountNumber: string
+  branchName: string
+  transactionDate: Date | string
+  effectivityDate: Date | string
+  transactionType: string
+  status?: $Enums.LoanStatus
+  installment: runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms: number
+  supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi: runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  closingBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  pensioner: Prisma.PensionerCreateNestedOneWithoutComputationSlipsInput
+  renewedFrom?: Prisma.ComputationSlipCreateNestedOneWithoutRenewalsInput
+  renewals?: Prisma.ComputationSlipCreateNestedManyWithoutRenewedFromInput
+  loanCollections?: Prisma.LoanCollectionCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionCreateNestedManyWithoutComputationSlipInput
+}
+
+export type ComputationSlipUncheckedCreateWithoutSupplementaryChargesInput = {
+  id?: string
+  counterNumber: number
+  controlNumber: string
+  accountNumber: string
+  branchName: string
+  pensionerId: string
+  transactionDate: Date | string
+  effectivityDate: Date | string
+  transactionType: string
+  status?: $Enums.LoanStatus
+  installment: runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms: number
+  supplementary?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi: runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee: runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut: runtime.Decimal | runtime.DecimalJsLike | number | string
+  renewedFromId?: string | null
+  closingBalance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  renewals?: Prisma.ComputationSlipUncheckedCreateNestedManyWithoutRenewedFromInput
+  loanCollections?: Prisma.LoanCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedCreateNestedManyWithoutComputationSlipInput
+}
+
+export type ComputationSlipCreateOrConnectWithoutSupplementaryChargesInput = {
+  where: Prisma.ComputationSlipWhereUniqueInput
+  create: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryChargesInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryChargesInput>
+}
+
+export type ComputationSlipUpsertWithoutSupplementaryChargesInput = {
+  update: Prisma.XOR<Prisma.ComputationSlipUpdateWithoutSupplementaryChargesInput, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryChargesInput>
+  create: Prisma.XOR<Prisma.ComputationSlipCreateWithoutSupplementaryChargesInput, Prisma.ComputationSlipUncheckedCreateWithoutSupplementaryChargesInput>
+  where?: Prisma.ComputationSlipWhereInput
+}
+
+export type ComputationSlipUpdateToOneWithWhereWithoutSupplementaryChargesInput = {
+  where?: Prisma.ComputationSlipWhereInput
+  data: Prisma.XOR<Prisma.ComputationSlipUpdateWithoutSupplementaryChargesInput, Prisma.ComputationSlipUncheckedUpdateWithoutSupplementaryChargesInput>
+}
+
+export type ComputationSlipUpdateWithoutSupplementaryChargesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  counterNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  controlNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  accountNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  branchName?: Prisma.StringFieldUpdateOperationsInput | string
+  transactionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectivityDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactionType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumLoanStatusFieldUpdateOperationsInput | $Enums.LoanStatus
+  installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms?: Prisma.IntFieldUpdateOperationsInput | number
+  supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  closingBalance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pensioner?: Prisma.PensionerUpdateOneRequiredWithoutComputationSlipsNestedInput
+  renewedFrom?: Prisma.ComputationSlipUpdateOneWithoutRenewalsNestedInput
+  renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
+  loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
+}
+
+export type ComputationSlipUncheckedUpdateWithoutSupplementaryChargesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  counterNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  controlNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  accountNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  branchName?: Prisma.StringFieldUpdateOperationsInput | string
+  pensionerId?: Prisma.StringFieldUpdateOperationsInput | string
+  transactionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectivityDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactionType?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumLoanStatusFieldUpdateOperationsInput | $Enums.LoanStatus
+  installment?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  terms?: Prisma.IntFieldUpdateOperationsInput | number
+  supplementary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  supplementaryBalance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  principalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  udi?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  collectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  processingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  loanProtectionFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  icod?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalCashOut?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  renewedFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closingBalance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
+  loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipCreateManyPensionerInput = {
@@ -1900,6 +2093,7 @@ export type ComputationSlipUpdateWithoutPensionerInput = {
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutPensionerInput = {
@@ -1934,6 +2128,7 @@ export type ComputationSlipUncheckedUpdateWithoutPensionerInput = {
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateManyWithoutPensionerInput = {
@@ -2030,6 +2225,7 @@ export type ComputationSlipUpdateWithoutRenewedFromInput = {
   renewals?: Prisma.ComputationSlipUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateWithoutRenewedFromInput = {
@@ -2064,6 +2260,7 @@ export type ComputationSlipUncheckedUpdateWithoutRenewedFromInput = {
   renewals?: Prisma.ComputationSlipUncheckedUpdateManyWithoutRenewedFromNestedInput
   loanCollections?: Prisma.LoanCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
   supplementaryCollection?: Prisma.SupplementaryCollectionUncheckedUpdateManyWithoutComputationSlipNestedInput
+  supplementaryCharges?: Prisma.SupplementaryChargeUncheckedUpdateManyWithoutComputationSlipNestedInput
 }
 
 export type ComputationSlipUncheckedUpdateManyWithoutRenewedFromInput = {
@@ -2106,12 +2303,14 @@ export type ComputationSlipCountOutputType = {
   renewals: number
   loanCollections: number
   supplementaryCollection: number
+  supplementaryCharges: number
 }
 
 export type ComputationSlipCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   renewals?: boolean | ComputationSlipCountOutputTypeCountRenewalsArgs
   loanCollections?: boolean | ComputationSlipCountOutputTypeCountLoanCollectionsArgs
   supplementaryCollection?: boolean | ComputationSlipCountOutputTypeCountSupplementaryCollectionArgs
+  supplementaryCharges?: boolean | ComputationSlipCountOutputTypeCountSupplementaryChargesArgs
 }
 
 /**
@@ -2143,6 +2342,13 @@ export type ComputationSlipCountOutputTypeCountLoanCollectionsArgs<ExtArgs exten
  */
 export type ComputationSlipCountOutputTypeCountSupplementaryCollectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SupplementaryCollectionWhereInput
+}
+
+/**
+ * ComputationSlipCountOutputType without action
+ */
+export type ComputationSlipCountOutputTypeCountSupplementaryChargesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplementaryChargeWhereInput
 }
 
 
@@ -2181,6 +2387,7 @@ export type ComputationSlipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   renewals?: boolean | Prisma.ComputationSlip$renewalsArgs<ExtArgs>
   loanCollections?: boolean | Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs>
   supplementaryCollection?: boolean | Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs>
+  supplementaryCharges?: boolean | Prisma.ComputationSlip$supplementaryChargesArgs<ExtArgs>
   _count?: boolean | Prisma.ComputationSlipCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["computationSlip"]>
 
@@ -2291,6 +2498,7 @@ export type ComputationSlipInclude<ExtArgs extends runtime.Types.Extensions.Inte
   renewals?: boolean | Prisma.ComputationSlip$renewalsArgs<ExtArgs>
   loanCollections?: boolean | Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs>
   supplementaryCollection?: boolean | Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs>
+  supplementaryCharges?: boolean | Prisma.ComputationSlip$supplementaryChargesArgs<ExtArgs>
   _count?: boolean | Prisma.ComputationSlipCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ComputationSlipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2310,6 +2518,7 @@ export type $ComputationSlipPayload<ExtArgs extends runtime.Types.Extensions.Int
     renewals: Prisma.$ComputationSlipPayload<ExtArgs>[]
     loanCollections: Prisma.$LoanCollectionPayload<ExtArgs>[]
     supplementaryCollection: Prisma.$SupplementaryCollectionPayload<ExtArgs>[]
+    supplementaryCharges: Prisma.$SupplementaryChargePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2740,6 +2949,7 @@ export interface Prisma__ComputationSlipClient<T, Null = never, ExtArgs extends 
   renewals<T extends Prisma.ComputationSlip$renewalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$renewalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ComputationSlipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   loanCollections<T extends Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$loanCollectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LoanCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supplementaryCollection<T extends Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$supplementaryCollectionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplementaryCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supplementaryCharges<T extends Prisma.ComputationSlip$supplementaryChargesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComputationSlip$supplementaryChargesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplementaryChargePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3287,6 +3497,30 @@ export type ComputationSlip$supplementaryCollectionArgs<ExtArgs extends runtime.
   take?: number
   skip?: number
   distinct?: Prisma.SupplementaryCollectionScalarFieldEnum | Prisma.SupplementaryCollectionScalarFieldEnum[]
+}
+
+/**
+ * ComputationSlip.supplementaryCharges
+ */
+export type ComputationSlip$supplementaryChargesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupplementaryCharge
+   */
+  select?: Prisma.SupplementaryChargeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupplementaryCharge
+   */
+  omit?: Prisma.SupplementaryChargeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplementaryChargeInclude<ExtArgs> | null
+  where?: Prisma.SupplementaryChargeWhereInput
+  orderBy?: Prisma.SupplementaryChargeOrderByWithRelationInput | Prisma.SupplementaryChargeOrderByWithRelationInput[]
+  cursor?: Prisma.SupplementaryChargeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplementaryChargeScalarFieldEnum | Prisma.SupplementaryChargeScalarFieldEnum[]
 }
 
 /**

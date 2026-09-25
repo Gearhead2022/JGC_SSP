@@ -19,6 +19,27 @@ export const sourceCollectionSchema =
             .positive(),
     });
 
+
+const supplementaryChargeBreakdownItemSchema =
+    z.object({
+        id: z.string().uuid(),
+
+        chargeMonth:
+            z.string(),
+
+        principalBasis:
+            z.number(),
+
+        chargeAmount:
+            z.number(),
+
+        paidAmount:
+            z.number(),
+
+        outstandingAmount:
+            z.number(),
+    });
+
 export const computationSlipInputSchema =
     z.object({
         pensionerId: z
@@ -93,7 +114,9 @@ export const computationSlipInputSchema =
             .int()
             .min(0),
         applySupplementaryCharge: z.boolean(),
+
     });
+
 
 export const calculateComputationSlipSchema =
     computationSlipInputSchema
@@ -187,10 +210,7 @@ export const computationSlipCalculationResultSchema =
         sourceCollection:
             sourceCollectionSchema
                 .optional(),
-        supplementaryCharge:
-            z.number()
-                .min(0),
-        supplementaryChargeMonthly:
+        currentSupplementaryCharge:
             z.number()
                 .min(0),
         supplementaryChargeAvailableMonths:
@@ -202,6 +222,19 @@ export const computationSlipCalculationResultSchema =
         supplementaryChargeToPay:
             z.number()
                 .min(0),
+        carriedSupplementaryCharge:
+            z.number()
+                .min(0),
+
+        carriedSupplementaryChargeBreakdown:
+            z.array(
+                supplementaryChargeBreakdownItemSchema
+            ),
+
+        supplementaryChargeBreakdown:
+            z.array(
+                supplementaryChargeBreakdownItemSchema
+            ),
 
     });
 

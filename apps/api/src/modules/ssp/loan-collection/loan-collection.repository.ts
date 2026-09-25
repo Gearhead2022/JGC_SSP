@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/database/prisma";
 import { CollectionStatus } from "../../../../generated/prisma/client";
+import { Prisma, PrismaClient } from "../../../../generated/prisma/client";
+
+export type DbClient =
+    PrismaClient |
+    Prisma.TransactionClient;
 
 export async function findComputationSlipById(
     computationSlipId: string
@@ -41,9 +46,10 @@ type CreateLoanCollectionData = {
 };
 
 export async function createLoanCollection(
-    data: CreateLoanCollectionData
+    data: CreateLoanCollectionData,
+    db: DbClient = prisma
 ) {
-    return prisma.loanCollection.create({
+    return db.loanCollection.create({
         data: {
             computationSlipId:
                 data.computationSlipId,
@@ -166,9 +172,10 @@ export async function findCollectionHistory(
 
 export async function findCollectionByDate(
     computationSlipId: string,
-    collectionDate: Date
+    collectionDate: Date,
+    db: DbClient = prisma
 ) {
-    return prisma.loanCollection.findUnique({
+    return db.loanCollection.findUnique({
         where: {
             computationSlipId_collectionDate: {
                 computationSlipId,
@@ -178,10 +185,11 @@ export async function findCollectionByDate(
     });
 }
 
-export async function findLatestPostedCollection(
-    computationSlipId: string
+export async function findLatestPostedLoanCollection(
+    computationSlipId: string,
+    db: DbClient = prisma,
 ) {
-    return prisma.loanCollection.findFirst({
+    return db.loanCollection.findFirst({
         where: {
             computationSlipId,
             status: "POSTED",

@@ -24,7 +24,13 @@ export function formatDateApi(value: string | Date) {
     return `${year}-${month}-${day}`;
 }
 
-export function dateStringToUtcDate(value: string): Date {
+export function dateStringToUtcDate(value: string | Date): Date {
+    if (value instanceof Date) {
+        return new Date(
+            Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate())
+        );
+    }
+
     const [year, month, day] = value
         .split("-")
         .map(Number);

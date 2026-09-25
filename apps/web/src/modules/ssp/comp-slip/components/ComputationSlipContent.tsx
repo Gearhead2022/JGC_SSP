@@ -159,7 +159,7 @@ export default function ComputationSlipContent({
     const activeLoans = activeLoansList?.data ?? [];
     const activeLoan = activeLoanSelected?.data;
 
-    // console.log('loans', activeLoan)
+    console.log('loans', activeLoan)
 
     useEffect(() => {
         if (
@@ -178,6 +178,8 @@ export default function ComputationSlipContent({
             setValue("transactionDate", transactionDate);
 
             const balance = Number(activeLoan.supplementaryBalance) || 0;
+
+            console.log('balance', balance)
 
             setSupplementaryBalance(balance);
 
@@ -204,20 +206,29 @@ export default function ComputationSlipContent({
 
     const loanProtectionFee = computation?.loanProtectionFee ?? 0;
 
-    const supplementaryCharge =
-        computation?.supplementaryCharge ?? 0;
+    const carriedSupplementaryCharge =
+        computation?.carriedSupplementaryCharge ?? 0;
 
-    const supplementaryChargeMonthly =
-        computation?.supplementaryChargeMonthly ?? 0;
+    const currentSupplementaryCharge =
+        computation?.currentSupplementaryCharge ?? 0;
+
+    const supplementaryChargeToPay =
+        computation?.supplementaryChargeToPay ?? 0;
+
+    const carriedSupplementaryChargeBreakdown =
+        computation?.carriedSupplementaryChargeBreakdown ?? [];
+
+    const supplementaryChargeBreakdown =
+        computation?.supplementaryChargeBreakdown ?? [];
 
     const supplementaryChargeAvailableMonths =
         computation?.supplementaryChargeAvailableMonths ?? 0;
 
+    const supplementaryChargeMonthsSelected =
+        computation?.supplementaryChargeMonthsToPay ?? 0;
+
     const supplementaryChargeRemainingMonths =
         computation?.supplementaryChargeRemainingMonths ?? 0;
-
-    const supplementaryChargeToPay =
-        computation?.supplementaryChargeToPay ?? 0;
 
     const activeLoanBalance =
         computation?.activeLoanBalance ?? 0;
@@ -251,8 +262,10 @@ export default function ComputationSlipContent({
         })
         : [];
 
+    // console.log('supplementaryBalances', supplementaryBalance)
+
     const slSchedule =
-        effectivityDate && loanTerms > 0 && installment && installment > 0 && supplementary > 0
+        effectivityDate && loanTerms > 0 && installment && installment > 0
             ? generateSupplementaryLoanSchedule({
                 effectivityDate,
                 installment,
@@ -260,6 +273,8 @@ export default function ComputationSlipContent({
                 supplementaryRate: SL_RATE,
             })
             : [];
+
+    // console.log('slSchedule', slSchedule)
 
     const totalSupplementaryCharge = slSchedule.reduce((total, item) => total + item.supplementaryCharge, 0);
 
@@ -714,7 +729,7 @@ export default function ComputationSlipContent({
 
                                                     <div className={calculatedFieldClass}>
                                                         ₱ {formatNumber(
-                                                            supplementaryCharge
+                                                            currentSupplementaryCharge
                                                         )}
                                                     </div>
 
@@ -724,7 +739,7 @@ export default function ComputationSlipContent({
                                                             <p className="mt-1 text-xs text-gray-500">
                                                                 ₱
                                                                 {formatNumber(
-                                                                    supplementaryChargeMonthly
+                                                                    supplementaryChargeToPay
                                                                 )}
                                                                 {" per month · "}
                                                                 {supplementaryChargeRemainingMonths}
@@ -815,12 +830,26 @@ export default function ComputationSlipContent({
                                             />
 
                                             <SlipLine
-                                                label="SL monthly charge"
+                                                label="Previous unpaid SL charges"
                                                 value={`₱ ${formatNumber(
-                                                    supplementaryChargeMonthly
+                                                    carriedSupplementaryCharge
                                                 )}`}
                                             />
 
+                                            <SlipLine
+                                                label="Current SL charges"
+                                                value={`₱ ${formatNumber(
+                                                    currentSupplementaryCharge
+                                                )}`}
+                                            />
+
+                                            <SlipLine
+                                                label="SL charge to deduct"
+                                                value={`₱ ${formatNumber(
+                                                    supplementaryChargeToPay
+                                                )}`}
+                                                emphasis
+                                            />
                                             <SlipLine
                                                 label="SL charge months available"
                                                 value={`${supplementaryChargeAvailableMonths}`}
@@ -834,6 +863,11 @@ export default function ComputationSlipContent({
                                             <SlipLine
                                                 label="SL charge remaining months"
                                                 value={`${supplementaryChargeRemainingMonths}`}
+                                            />
+
+                                            <SlipLine
+                                                label="SL carried supplementary charge"
+                                                value={`${carriedSupplementaryCharge}`}
                                             />
 
                                             <SlipLine
@@ -864,6 +898,108 @@ export default function ComputationSlipContent({
                     )}
                 </div>
             </div >
+
+            {carriedSupplementaryChargeBreakdown.length > 0 && (
+                <div className="rounded-md border border-gray-200 bg-white p-4">
+                    <p className="mb-3 text-sm font-semibold text-gray-900">
+                        Previous unpaid supplementary charges
+                    </p>
+
+                    <div className="space-y-2">
+                        {carriedSupplementaryChargeBreakdown.map(
+                            (item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex items-center justify-between text-sm"
+                                >
+                                    <span className="text-gray-600">
+                                        {formatMonthYear(
+                                            item.chargeMonth
+                                        )}
+                                    </span>
+
+                                    <span className="font-medium text-gray-900">
+                                        ₱
+                                        {formatNumber(
+                                            item.outstandingAmount
+                                        )}
+                                    </span>
+                                </div>
+                            )
+                        )}
+                    </div>
+
+                    <div className="mt-3 border-t border-gray-200 pt-3">
+                        <div className="flex justify-between text-sm font-semibold">
+                            <span>Carried charge</span>
+
+                            <span>
+                                ₱
+                                {formatNumber(
+                                    carriedSupplementaryCharge
+                                )}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {supplementaryChargeBreakdown.length > 0 && (
+                <div className="rounded-md border border-gray-200 bg-white p-4">
+                    <p className="mb-3 text-sm font-semibold text-gray-900">
+                        Current loan supplementary charges
+                    </p>
+
+                    <div className="space-y-2">
+                        {supplementaryChargeBreakdown.map(
+                            (item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex items-center justify-between text-sm"
+                                >
+                                    <div>
+                                        <p className="text-gray-700">
+                                            {formatMonthYear(
+                                                item.chargeMonth
+                                            )}
+                                        </p>
+
+                                        <p className="text-xs text-gray-500">
+                                            Basis: ₱
+                                            {formatNumber(
+                                                item.principalBasis
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    <span className="font-medium text-gray-900">
+                                        ₱
+                                        {formatNumber(
+                                            item.outstandingAmount
+                                        )}
+                                    </span>
+                                </div>
+                            )
+                        )}
+                    </div>
+
+                    <div className="mt-3 border-t border-gray-200 pt-3">
+                        <div className="flex justify-between text-sm">
+                            <span>
+                                Selected {supplementaryChargeMonthsSelected} of{" "}
+                                {supplementaryChargeAvailableMonths} month(s)
+                            </span>
+
+                            <span className="font-semibold">
+                                ₱
+                                {formatNumber(
+                                    currentSupplementaryCharge
+                                )}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Schedules */}
             {

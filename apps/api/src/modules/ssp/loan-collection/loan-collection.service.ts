@@ -1,10 +1,16 @@
-import { addMonthsToDate, dateStringToUtcDate, type CreateLoanCollectionSchema } from "@repo/shared";
+import { addMonthsToDate, dateStringToUtcDate, SL_RATE, type CreateLoanCollectionSchema } from "@repo/shared";
 import * as repository from "./loan-collection.repository";
+import * as supplementaryRepository from "../sl-collection/sl-collection.repository";
+import * as compslipRepository from "../comp-slip/comp-slip.repository";
+import { prisma } from "@/lib/database/prisma";
 
 export async function createLoanCollection(
     data: CreateLoanCollectionSchema
 ) {
-    const computationSlip = await repository.findComputationSlipById(data.computationSlipId);
+    const computationSlip =
+        await repository.findComputationSlipById(
+            data.computationSlipId
+        );
 
     if (!computationSlip) {
         throw new Error(
@@ -12,66 +18,246 @@ export async function createLoanCollection(
         );
     }
 
-    const collectionDate = dateStringToUtcDate(data.collectionDate);
-
-    /*
-     * Check if this month's collection
-     * has already been created.
-     */
-    const existingCollection = await repository.findCollectionByDate(
-        data.computationSlipId,
-        collectionDate
-    );
-
-    if (existingCollection) {
-        return existingCollection;
-    }
-
-    /*
-     * IMPORTANT:
-     * Latest balance should come from
-     * POSTED collections only.
-     */
-    const latestPostedCollection =
-        await repository.findLatestPostedCollection(
-            data.computationSlipId
+    const pensioner =
+        await compslipRepository.findPensionerById(
+            computationSlip.pensionerId
         );
 
-    const beginningBalance =
-        latestPostedCollection
-            ? Number(
-                latestPostedCollection.endingBalance
-            )
-            : Number(
-                computationSlip.principalAmount
-            );
-
-    if (beginningBalance <= 0) {
+    if (!pensioner) {
         throw new Error(
-            "This loan is already fully paid"
+            "Pensioner not found"
         );
     }
 
-    const amount = Math.min(data.amount, beginningBalance);
+    const collectionDate =
+        dateStringToUtcDate(
+            data.collectionDate
+        );
 
-    const endingBalance = Math.max(0, beginningBalance - amount);
+    if (
+        Number.isNaN(
+            collectionDate.getTime()
+        )
+    ) {
+        throw new Error(
+            "Invalid collection date"
+        );
+    }
 
-    return repository.createLoanCollection({
-        computationSlipId:
-            data.computationSlipId,
+    return prisma.$transaction(
+        async (tx) => {
+            /**
+             * Prevent duplicate regular collection
+             */
+            const existingCollection =
+                await repository.findCollectionByDate(
+                    data.computationSlipId,
+                    collectionDate,
+                    tx
+                );
 
-        collectionDate,
+            if (existingCollection) {
+                return existingCollection;
+            }
 
-        amount,
+            // console.log("existingCollection", existingCollection);
 
-        beginningBalance,
+            /**
+             * REGULAR LOAN COLLECTION
+             */
+            const latestPostedCollection =
+                await repository.findLatestPostedLoanCollection(
+                    data.computationSlipId,
+                    tx
+                );
 
-        endingBalance,
+            const beginningBalance =
+                latestPostedCollection
+                    ? Number(
+                        latestPostedCollection
+                            .endingBalance
+                    )
+                    : Number(
+                        computationSlip
+                            .principalAmount
+                    );
 
-        remarks: data.remarks ?? 'Normal Collection',
+            if (beginningBalance <= 0) {
+                throw new Error(
+                    "This loan is already fully paid"
+                );
+            }
 
-        status: "PENDING",
-    });
+            const amount =
+                Math.min(
+                    Number(data.amount),
+                    beginningBalance
+                );
+
+            const endingBalance =
+                Math.max(
+                    0,
+                    beginningBalance -
+                    amount
+                );
+
+            const loanCollection =
+                await repository.createLoanCollection(
+                    {
+                        computationSlipId:
+                            data.computationSlipId,
+
+                        collectionDate,
+
+                        amount,
+
+                        beginningBalance,
+
+                        endingBalance,
+
+                        remarks:
+                            data.remarks ??
+                            "Normal Collection",
+
+                        status:
+                            "PENDING",
+                    },
+
+                    tx
+                );
+
+            /**
+             * SUPPLEMENTARY PRINCIPAL COLLECTION
+             *
+             * Whatever remains from the pension
+             * after the regular installment may
+             * be applied to SL principal.
+             */
+            const availableForSupplementary = Math.max(0, Number(pensioner.actualPension) - amount);
+
+            const latestPostedSupplementaryCollection =
+                await supplementaryRepository.findLatestPostedSupplementaryCollection(
+                    data.computationSlipId,
+                    tx
+                );
+
+            const currentSupplementaryBalance =
+                latestPostedSupplementaryCollection
+                    ? Number(
+                        latestPostedSupplementaryCollection
+                            .endingBalance
+                    )
+                    : Number(
+                        computationSlip
+                            .supplementaryBalance
+                    );
+
+            if (
+                availableForSupplementary > 0 &&
+                currentSupplementaryBalance > 0
+            ) {
+                /**
+                 * Never pay more than the
+                 * remaining SL principal.
+                 */
+                const supplementaryPrincipalPaid =
+                    Math.min(
+                        availableForSupplementary,
+                        currentSupplementaryBalance
+                    );
+
+                const supplementaryEndingBalance =
+                    Math.max(
+                        0,
+                        currentSupplementaryBalance -
+                        supplementaryPrincipalPaid
+                    );
+
+                // this should be on posting function or maybe added but not posted yet
+
+                /**
+                * mark supllementary charge as unpaid prior to collection date
+                * prior to collection date less than and equal to
+                */
+
+                await supplementaryRepository
+                    .markDueSupplementaryChargesAsUnpaid(
+                        data.computationSlipId,
+                        dateStringToUtcDate(collectionDate),
+                        tx
+                    );
+
+                /**
+                * recalculate supplemantary charges
+                * prior to collection date greater than
+                */
+
+                await supplementaryRepository
+                    .recalculateFutureSupplementaryCharges(
+                        data.computationSlipId,
+                        collectionDate,
+                        supplementaryEndingBalance,
+                        SL_RATE,
+                        tx
+                    );
+
+                /**
+                * create supplementary collection
+                * prior to collection date
+                */
+
+                await supplementaryRepository.createSupplementaryCollection(
+                    {
+                        computationSlipId: data.computationSlipId,
+
+                        collectionDate,
+
+                        amount: supplementaryPrincipalPaid,
+
+                        beginningBalance: currentSupplementaryBalance,
+
+                        endingBalance: supplementaryEndingBalance,
+
+                        monthlyCharge: 0,
+
+                        availableChargeMonths: 0,
+
+                        paidChargeMonths: 0,
+
+                        remainingChargeMonths: 0,
+
+                        chargeAmount: 0,
+
+                        chargePaid: 0,
+
+                        remainingCharge: 0,
+
+                        principalPaid: supplementaryPrincipalPaid,
+
+                        remarks: "Supplementary principal collection",
+
+                        status: "PENDING",
+                    },
+
+                    tx
+                );
+
+                /**
+                * Update Supplementary balance in compslip
+                * prior to collection date
+                */
+
+                await compslipRepository
+                    .updateSupplementaryBalance(
+                        data.computationSlipId,
+                        supplementaryEndingBalance,
+                        tx
+                    );
+            }
+
+            return loanCollection;
+        }
+    );
 }
 
 export async function getActiveLoanByPensionerId(
@@ -87,8 +273,7 @@ export async function getActiveLoanByPensionerId(
     }
 
     return computationSlips.map((computationSlip) => {
-        const collections =
-            computationSlip.loanCollections;
+        const collections = computationSlip.loanCollections;
 
         const latestCollection =
             collections.length > 0
@@ -104,14 +289,11 @@ export async function getActiveLoanByPensionerId(
                     computationSlip.principalAmount
                 );
 
-        const paidTerms =
-            collections.length;
+        const paidTerms = collections.length;
 
-        const effectivityDate =
-            computationSlip.effectivityDate;
+        const effectivityDate = computationSlip.effectivityDate;
 
-        const transactionDate =
-            computationSlip.transactionDate;
+        const transactionDate = computationSlip.transactionDate;
 
         const nextCollectionDate =
             addMonthsToDate(
@@ -193,6 +375,10 @@ export async function getActiveLoanByPensionerId(
             nextCollectionDate,
 
             loanStatus,
+
+            supplementary: computationSlip.supplementary,
+
+            supplementaryBalance: Number(computationSlip.supplementaryBalance),
         };
     });
 }
@@ -308,10 +494,9 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
         loanStatus:
             computationSlip.status,
 
-        supplementaryBalance:
-            Number(
-                computationSlip.supplementary
-            ),
+        supplementary: computationSlip.supplementary,
+
+        supplementaryBalance: Number(computationSlip.supplementaryBalance),
     };
 }
 

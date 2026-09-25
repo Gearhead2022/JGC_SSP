@@ -27,3 +27,14 @@ export const CollectionStatus = {
 } as const
 
 export type CollectionStatus = (typeof CollectionStatus)[keyof typeof CollectionStatus]
+
+
+export const SupplementaryChargeStatus = {
+  SCHEDULED: 'SCHEDULED',
+  UNPAID: 'UNPAID',
+  PARTIAL: 'PARTIAL',
+  PAID: 'PAID',
+  SUPERSEDED: 'SUPERSEDED'
+} as const
+
+export type SupplementaryChargeStatus = (typeof SupplementaryChargeStatus)[keyof typeof SupplementaryChargeStatus]

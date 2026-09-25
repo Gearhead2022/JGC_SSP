@@ -4,6 +4,9 @@ CREATE TYPE "LoanStatus" AS ENUM ('ACTIVE', 'CLOSED', 'RENEWED', 'PAID', 'CANCEL
 -- CreateEnum
 CREATE TYPE "CollectionStatus" AS ENUM ('PENDING', 'POSTED', 'CANCELLED');
 
+-- CreateEnum
+CREATE TYPE "SupplementaryChargeStatus" AS ENUM ('UNPAID', 'PARTIAL', 'PAID');
+
 -- CreateTable
 CREATE TABLE "users" (
     "user_id" SERIAL NOT NULL,
@@ -164,6 +167,22 @@ CREATE TABLE "supplementary_collections" (
     CONSTRAINT "supplementary_collections_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "supplementary_charges" (
+    "id" UUID NOT NULL,
+    "computation_slip_id" UUID NOT NULL,
+    "charge_month" DATE NOT NULL,
+    "principal_basis" DECIMAL(12,2) NOT NULL,
+    "rate" DECIMAL(8,4) NOT NULL,
+    "charge_amount" DECIMAL(12,2) NOT NULL,
+    "paid_amount" DECIMAL(12,2) NOT NULL DEFAULT 0,
+    "status" "SupplementaryChargeStatus" NOT NULL DEFAULT 'UNPAID',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "supplementary_charges_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
@@ -227,6 +246,15 @@ CREATE INDEX "supplementary_collections_computation_slip_id_idx" ON "supplementa
 -- CreateIndex
 CREATE INDEX "supplementary_collections_collection_date_idx" ON "supplementary_collections"("collection_date");
 
+-- CreateIndex
+CREATE INDEX "supplementary_charges_computation_slip_id_idx" ON "supplementary_charges"("computation_slip_id");
+
+-- CreateIndex
+CREATE INDEX "supplementary_charges_charge_month_idx" ON "supplementary_charges"("charge_month");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "supplementary_charges_computation_slip_id_charge_month_key" ON "supplementary_charges"("computation_slip_id", "charge_month");
+
 -- AddForeignKey
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -250,3 +278,6 @@ ALTER TABLE "loan_collections" ADD CONSTRAINT "loan_collections_computation_slip
 
 -- AddForeignKey
 ALTER TABLE "supplementary_collections" ADD CONSTRAINT "supplementary_collections_computation_slip_id_fkey" FOREIGN KEY ("computation_slip_id") REFERENCES "computation_slips"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "supplementary_charges" ADD CONSTRAINT "supplementary_charges_computation_slip_id_fkey" FOREIGN KEY ("computation_slip_id") REFERENCES "computation_slips"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

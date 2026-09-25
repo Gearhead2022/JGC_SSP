@@ -91,3 +91,8 @@ export type BranchCounter = Prisma.BranchCounterModel
  * 
  */
 export type SupplementaryCollection = Prisma.SupplementaryCollectionModel
+/**
+ * Model SupplementaryCharge
+ * 
+ */
+export type SupplementaryCharge = Prisma.SupplementaryChargeModel

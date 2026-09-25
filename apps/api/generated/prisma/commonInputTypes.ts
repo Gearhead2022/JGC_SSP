@@ -317,6 +317,23 @@ export type EnumCollectionStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumCollectionStatusFilter<$PrismaModel>
 }
 
+export type EnumSupplementaryChargeStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupplementaryChargeStatus | Prisma.EnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupplementaryChargeStatusFilter<$PrismaModel> | $Enums.SupplementaryChargeStatus
+}
+
+export type EnumSupplementaryChargeStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupplementaryChargeStatus | Prisma.EnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupplementaryChargeStatusWithAggregatesFilter<$PrismaModel> | $Enums.SupplementaryChargeStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupplementaryChargeStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupplementaryChargeStatusFilter<$PrismaModel>
+}
+
 export type NestedIntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -627,6 +644,23 @@ export type NestedEnumCollectionStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumCollectionStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumCollectionStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSupplementaryChargeStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupplementaryChargeStatus | Prisma.EnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupplementaryChargeStatusFilter<$PrismaModel> | $Enums.SupplementaryChargeStatus
+}
+
+export type NestedEnumSupplementaryChargeStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupplementaryChargeStatus | Prisma.EnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupplementaryChargeStatus[] | Prisma.ListEnumSupplementaryChargeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupplementaryChargeStatusWithAggregatesFilter<$PrismaModel> | $Enums.SupplementaryChargeStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupplementaryChargeStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupplementaryChargeStatusFilter<$PrismaModel>
 }
 
 

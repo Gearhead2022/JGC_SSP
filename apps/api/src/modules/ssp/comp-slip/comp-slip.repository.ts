@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/database/prisma";
-import { LoanStatus, Prisma } from "../../../../generated/prisma/client";
-import { CreateComputationSlipSchema, CreateLoanCollectionSchema } from "@repo/shared";
+import { Prisma, PrismaClient } from "../../../../generated/prisma/client";
+
+export type DbClient =
+    PrismaClient |
+    Prisma.TransactionClient;
 
 type CloseSourceLoanData = {
     computationSlipId: string;
@@ -9,9 +12,6 @@ type CloseSourceLoanData = {
     | "RENEWED"
     | "CLOSED";
 };
-
-type PrismaTx =
-    Prisma.TransactionClient;
 
 export async function searchPensioners(search: string) {
     const where: Prisma.PensionerWhereInput = {};
@@ -91,7 +91,7 @@ type CreateComputationSlipData = {
     | "CANCELLED";
 };
 
-export async function createComputationSlip(tx: PrismaTx, data: CreateComputationSlipData) {
+export async function createComputationSlip(data: CreateComputationSlipData, db: DbClient = prisma) {
 
     const branchName = data.branchName.trim().toUpperCase();
 
@@ -100,11 +100,12 @@ export async function createComputationSlip(tx: PrismaTx, data: CreateComputatio
         controlNumber,
         accountNumber,
     } = await generateLoanIdentifiers(
-        tx,
-        branchName
+
+        branchName,
+        db
     );
 
-    return tx.computationSlip.create({
+    return db.computationSlip.create({
         data: {
             pensionerId:
                 data.pensionerId,
@@ -213,10 +214,10 @@ export async function findLatestCounterByBranch(branchName: string) {
 }
 
 export async function closeSourceLoan(
-    tx: PrismaTx,
-    data: CloseSourceLoanData
+    data: CloseSourceLoanData,
+    db: DbClient = prisma
 ) {
-    return tx.computationSlip.update({
+    return db.computationSlip.update({
         where: {
             id: data.computationSlipId,
         },
@@ -243,10 +244,10 @@ type CreatePendingCollectionData = {
 };
 
 export async function createPendingCollection(
-    tx: PrismaTx,
-    data: CreatePendingCollectionData
+    data: CreatePendingCollectionData,
+    db: DbClient = prisma
 ) {
-    return tx.loanCollection.create({
+    return db.loanCollection.create({
         data: {
             computationSlipId:
                 data.computationSlipId,
@@ -273,14 +274,14 @@ export async function createPendingCollection(
 }
 
 async function generateLoanIdentifiers(
-    tx: PrismaTx,
-    branchName: string
+    branchName: string,
+    db: DbClient = prisma
 ) {
     /**
      * Branch-specific counter/control number
      */
     const latestSlip =
-        await tx.computationSlip.findFirst({
+        await db.computationSlip.findFirst({
             where: {
                 branchName,
             },
@@ -307,7 +308,7 @@ async function generateLoanIdentifiers(
      * Global account number
      */
     const accountCount =
-        await tx.computationSlip.count();
+        await db.computationSlip.count();
 
     const nextAccountNumber =
         accountCount + 1;
@@ -323,4 +324,20 @@ async function generateLoanIdentifiers(
         controlNumber,
         accountNumber,
     };
+}
+
+export async function updateSupplementaryBalance(
+    computationSlipId: string,
+    supplementaryBalance: number,
+    db: DbClient = prisma
+) {
+    return db.computationSlip.update({
+        where: {
+            id: computationSlipId,
+        },
+
+        data: {
+            supplementaryBalance,
+        },
+    });
 }

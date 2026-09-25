@@ -137,7 +137,7 @@ export default function CompSlipView() {
                             "Principal Amount",
                             "Actions",
                         ]}
-                        rows={compslipList.map((item) => [
+                        rows={compslipList.map((item, index) => [
                             item.status,
                             `${Number(item.pensioner.legacyPensionerId)}`,
                             item.accountNumber,
@@ -148,6 +148,7 @@ export default function CompSlipView() {
                             `₱${formatNumber(Number(item.supplementary))}`,
                             `₱${formatNumber(Number(item.principalAmount))}`,
                             <button
+                                key={index}
                                 type="button"
                                 onClick={() =>
                                     handleViewCollection(

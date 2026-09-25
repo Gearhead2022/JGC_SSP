@@ -160,6 +160,7 @@ model ComputationSlip {
 
   loanCollections         LoanCollection[]
   supplementaryCollection SupplementaryCollection[]
+  supplementaryCharges    SupplementaryCharge[]
 
   @@unique([branchName, counterNumber])
   @@unique([branchName, controlNumber])
@@ -245,9 +246,6 @@ model SupplementaryCollection {
   // Supplementary principal balance after payment
   endingBalance Decimal @map("ending_balance") @db.Decimal(12, 2)
 
-  // Monthly SL charge computed from supplementary balance
-  monthlyCharge Decimal @map("monthly_charge") @db.Decimal(12, 2)
-
   // Number of chargeable months available at transaction time
   availableChargeMonths Int @map("available_charge_months")
 
@@ -283,4 +281,41 @@ model SupplementaryCollection {
   @@index([computationSlipId])
   @@index([collectionDate])
   @@map("supplementary_collections")
+}
+
+model SupplementaryCharge {
+  id String @id @default(uuid()) @db.Uuid
+
+  computationSlipId String @map("computation_slip_id") @db.Uuid
+
+  computationSlip ComputationSlip @relation(fields: [computationSlipId], references: [id], onDelete: Restrict)
+
+  chargeMonth DateTime @map("charge_month") @db.Date
+
+  principalBasis Decimal @map("principal_basis") @db.Decimal(12, 2)
+
+  rate Decimal @db.Decimal(8, 2)
+
+  chargeAmount Decimal @map("charge_amount") @db.Decimal(12, 2)
+
+  paidAmount Decimal @default(0) @map("paid_amount") @db.Decimal(12, 2)
+
+  status SupplementaryChargeStatus @default(UNPAID)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([computationSlipId, chargeMonth])
+  @@index([computationSlipId])
+  @@index([chargeMonth])
+  @@map("supplementary_charges")
+}
+
+enum SupplementaryChargeStatus {
+  SCHEDULED
+  UNPAID
+  PARTIAL
+  PAID
+  SUPERSEDED
 }
