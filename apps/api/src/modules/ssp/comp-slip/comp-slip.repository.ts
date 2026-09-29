@@ -1,17 +1,6 @@
 import { prisma } from "@/lib/database/prisma";
-import { Prisma, PrismaClient } from "../../../../generated/prisma/client";
-
-export type DbClient =
-    PrismaClient |
-    Prisma.TransactionClient;
-
-type CloseSourceLoanData = {
-    computationSlipId: string;
-    closingBalance: number;
-    loanStatus:
-    | "RENEWED"
-    | "CLOSED";
-};
+import { Prisma } from "../../../../generated/prisma/client";
+import { DbClient, CloseSourceLoanData, CreateComputationSlipData, CreatePendingCollectionData } from "./comp-slip.types";
 
 export async function searchPensioners(search: string) {
     const where: Prisma.PensionerWhereInput = {};
@@ -55,42 +44,6 @@ export async function findPensionerById(
     });
 }
 
-type CreateComputationSlipData = {
-    pensionerId: string;
-    branchName: string;
-
-    transactionDate: Date;
-    effectivityDate: Date;
-
-    transactionType: string;
-
-    installment: number;
-    terms: number;
-    supplementary: number;
-    supplementaryBalance: number;
-
-    principalAmount: number;
-
-    udi: number;
-    collectionFee: number;
-    processingFee: number;
-    loanProtectionFee: number;
-    icod: number;
-
-    grossCashOut: number;
-    netCashOut: number;
-    totalCashOut: number;
-
-    renewedFromId?: string;
-
-    loanStatus:
-    | "ACTIVE"
-    | "RENEWED"
-    | "CLOSED"
-    | "PAID"
-    | "CANCELLED";
-};
-
 export async function createComputationSlip(data: CreateComputationSlipData, db: DbClient = prisma) {
 
     const branchName = data.branchName.trim().toUpperCase();
@@ -115,28 +68,20 @@ export async function createComputationSlip(data: CreateComputationSlipData, db:
             accountNumber,
             branchName,
 
-            transactionDate:
-                data.transactionDate,
+            transactionDate: data.transactionDate,
 
-            effectivityDate:
-                data.effectivityDate,
+            effectivityDate: data.effectivityDate,
 
-            transactionType:
-                data.transactionType,
+            transactionType: data.transactionType,
 
-            installment:
-                data.installment,
+            installment: data.installment,
 
-            terms:
-                data.terms,
+            terms: data.terms,
 
-            supplementary:
-                data.supplementary,
-            supplementaryBalance:
-                data.supplementaryBalance,
+            supplementary: data.supplementary,
+            supplementaryBalance: data.supplementaryBalance,
 
-            principalAmount:
-                data.principalAmount,
+            principalAmount: data.principalAmount,
 
             udi:
                 data.udi,
@@ -228,20 +173,6 @@ export async function closeSourceLoan(
         },
     });
 }
-
-type CreatePendingCollectionData = {
-    computationSlipId: string;
-
-    collectionDate: Date;
-
-    amount: number;
-
-    beginningBalance: number;
-
-    endingBalance: number;
-
-    remarks?: string;
-};
 
 export async function createPendingCollection(
     data: CreatePendingCollectionData,

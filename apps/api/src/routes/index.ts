@@ -24,14 +24,14 @@ router.use(
     dashboardRoutes
 );
 
-router.use("/ssp/comp-slip",authenticate,sspRoutes);
+router.use("/ssp/comp-slip", authenticate, sspRoutes);
 
-router.use("/ssp/loan-collections",loanCollectionRoutes);
+router.use("/ssp/loan-collections", loanCollectionRoutes);
 
-router.use("/pensioner/pensioner-list",authenticate,PensionerListRoutes);
+router.use("/pensioner/pensioner-list", authenticate, PensionerListRoutes);
 
 router.use(
-    "/ssp/sl-collections",
+    "/ssp/supplementary-collections",
     supplementaryCollectionRoutes
 );
 

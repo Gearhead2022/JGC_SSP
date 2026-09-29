@@ -407,7 +407,8 @@ export const ModelName = {
   LoanCollection: 'LoanCollection',
   BranchCounter: 'BranchCounter',
   SupplementaryCollection: 'SupplementaryCollection',
-  SupplementaryCharge: 'SupplementaryCharge'
+  SupplementaryCharge: 'SupplementaryCharge',
+  SupplementaryCollectionAllocation: 'SupplementaryCollectionAllocation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -423,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "permission" | "rolePermission" | "pensioner" | "computationSlip" | "loanCollection" | "branchCounter" | "supplementaryCollection" | "supplementaryCharge"
+    modelProps: "user" | "role" | "userRole" | "permission" | "rolePermission" | "pensioner" | "computationSlip" | "loanCollection" | "branchCounter" | "supplementaryCollection" | "supplementaryCharge" | "supplementaryCollectionAllocation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1241,6 +1242,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupplementaryCollectionAllocation: {
+      payload: Prisma.$SupplementaryCollectionAllocationPayload<ExtArgs>
+      fields: Prisma.SupplementaryCollectionAllocationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupplementaryCollectionAllocationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupplementaryCollectionAllocationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>
+        }
+        findFirst: {
+          args: Prisma.SupplementaryCollectionAllocationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupplementaryCollectionAllocationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>
+        }
+        findMany: {
+          args: Prisma.SupplementaryCollectionAllocationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>[]
+        }
+        create: {
+          args: Prisma.SupplementaryCollectionAllocationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>
+        }
+        createMany: {
+          args: Prisma.SupplementaryCollectionAllocationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupplementaryCollectionAllocationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>[]
+        }
+        delete: {
+          args: Prisma.SupplementaryCollectionAllocationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>
+        }
+        update: {
+          args: Prisma.SupplementaryCollectionAllocationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupplementaryCollectionAllocationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupplementaryCollectionAllocationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupplementaryCollectionAllocationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupplementaryCollectionAllocationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplementaryCollectionAllocationPayload>
+        }
+        aggregate: {
+          args: Prisma.SupplementaryCollectionAllocationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplementaryCollectionAllocation>
+        }
+        groupBy: {
+          args: Prisma.SupplementaryCollectionAllocationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplementaryCollectionAllocationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupplementaryCollectionAllocationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplementaryCollectionAllocationCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1453,6 +1528,17 @@ export const SupplementaryChargeScalarFieldEnum = {
 } as const
 
 export type SupplementaryChargeScalarFieldEnum = (typeof SupplementaryChargeScalarFieldEnum)[keyof typeof SupplementaryChargeScalarFieldEnum]
+
+
+export const SupplementaryCollectionAllocationScalarFieldEnum = {
+  id: 'id',
+  supplementaryCollectionId: 'supplementaryCollectionId',
+  supplementaryChargeId: 'supplementaryChargeId',
+  amount: 'amount',
+  createdAt: 'createdAt'
+} as const
+
+export type SupplementaryCollectionAllocationScalarFieldEnum = (typeof SupplementaryCollectionAllocationScalarFieldEnum)[keyof typeof SupplementaryCollectionAllocationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1765,6 +1851,7 @@ export type GlobalOmitConfig = {
   branchCounter?: Prisma.BranchCounterOmit
   supplementaryCollection?: Prisma.SupplementaryCollectionOmit
   supplementaryCharge?: Prisma.SupplementaryChargeOmit
+  supplementaryCollectionAllocation?: Prisma.SupplementaryCollectionAllocationOmit
 }
 
 /* Types for Logging */

@@ -61,20 +61,6 @@ export default function LoanCollectionView() {
         }
     }
 
-    useEffect(() => {
-        if (
-            activeLoans.length === 1 &&
-            !selectedAccountNumber
-        ) {
-            setSelectedAccountNumber(
-                activeLoans[0].accountNumber
-            );
-        }
-    }, [
-        activeLoans,
-        selectedAccountNumber,
-    ]);
-
     const { mutateAsync: postCollection, isPending: isPostingCollection } = usePostLoanCollection();
 
     async function handlePostCollection(

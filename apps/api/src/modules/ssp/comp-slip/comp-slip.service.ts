@@ -3,22 +3,16 @@ import {
     calculateLoanProtectionFee, calculateNetCashOut,
     CreateComputationSlipSchema,
     dateStringToUtcDate,
-    monthYearToUtcDate,
     getAge,
     TRANSACTION_TYPES,
     calculateUDIRebateAmount,
     CUT_OFF_DATE_UDI,
     formatDateApi,
-    CreateLoanCollectionSchema,
     calculateSourceLoanBalance,
     CalculateComputationSlipSchema,
     calculateLoanEffectivityDate,
     CUT_OFF_DATE_FOR_EFFECTIVITY,
-    LOAN_STATUS_TYPES,
-    calculateSupplementaryCharge,
     SL_RATE,
-    applySupplementaryPayment,
-    addMonthsToDate,
 } from "@repo/shared";
 import { prisma } from "@/lib/database/prisma";
 
@@ -39,7 +33,6 @@ export async function searchPensioners(search: string) {
     const pensioners = await compslipRepository.searchPensioners(normalizedSearch);
 
     return pensioners;
-
 }
 
 export async function calculateComputationSlip(
@@ -229,58 +222,19 @@ export async function calculateComputationSlip(
                 : Number(activeLoan.remainingBalance)
             : 0;
 
-    const supplementaryChargeStartDate =
-        lastPayment?.chargeMonth
-            ? addMonthsToDate(
-                new Date(lastPayment.chargeMonth),
-                1
+    const sourceResidualBalance =
+        requiresActiveLoan && activeLoan
+            ? Math.max(
+                0,
+                Number(activeLoan.remainingBalance) -
+                activeLoanBalance
             )
-            : activeLoan
-                ? addMonthsToDate(
-                    new Date(activeLoan.transactionDate),
-                    1
-                )
-                : addMonthsToDate(
-                    transactionDate,
-                    1
-                );
+            : 0;
 
-    // const supplementaryChargeResult =
-    //     requiresActiveLoan && activeLoan && totalSupplementaryBalance > 0
-    //         ? calculateSupplementaryCharge({
-    //             startDate: supplementaryChargeStartDate,
-
-    //             transactionDate,
-
-    //             supplementaryBalance: totalSupplementaryBalance,
-
-    //             supplementaryRate: SL_RATE,
-
-    //             monthsToPay: data.supplementaryChargeMonthsToPay,
-    //         })
-    //         : {
-    //             availableMonths: 0,
-    //             monthsToPay: 0,
-    //             remainingMonths: 0,
-    //             monthlyCharge: 0,
-    //             totalCharge: 0,
-    //         };
-
-
-    // console.log("supplementaryChargeResult", supplementaryChargeResult);
-    // console.log("totalSupplementaryBalance", activeLoan?.supplementaryBalance)
-
-    // const paymentResult =
-    //     applySupplementaryPayment({
-    //         paymentAmount: 1000,
-
-    //         supplementaryBalance: 6000,
-
-    //         supplementaryChargeAmount:
-    //             supplementaryChargeResult.totalCharge,
-
-    //         applyCharge: true,
-    //     });
+    const sourceLoanStatus =
+        sourceResidualBalance <= 0
+            ? "CLOSED"
+            : "RENEWED";
 
     const currentLoanOutstandingCharges =
         requiresActiveLoan && activeLoan
@@ -310,42 +264,13 @@ export async function calculateComputationSlip(
         );
 
     const carriedSupplementaryCharge =
-        requiresActiveLoan
+        requiresActiveLoan && activeLoan
             ? await supplementaryRepository
-                .getOutstandingSupplementaryChargesForPensioner(
-                    pensioner.id
+                .getCarriedSupplementaryChargesForPensioner(
+                    pensioner.id,
+                    activeLoan.computationSlipId
                 )
             : 0;
-
-    const currentSupplementaryChargeResult =
-        requiresActiveLoan &&
-            activeLoan &&
-            totalSupplementaryBalance > 0
-            ? calculateSupplementaryCharge({
-                startDate:
-                    supplementaryChargeStartDate,
-
-                transactionDate,
-
-                supplementaryBalance:
-                    activeLoan.supplementaryBalance,
-
-                supplementaryRate:
-                    SL_RATE,
-
-                monthsToPay:
-                    data.supplementaryChargeMonthsToPay,
-            })
-            : {
-                availableMonths: 0,
-                monthsToPay: 0,
-                remainingMonths: 0,
-                monthlyCharge: 0,
-                totalCharge: 0,
-            };
-
-    // const currentSupplementaryCharge =
-    //     currentSupplementaryChargeResult.totalCharge;
 
     const totalSupplementaryChargeDue =
         carriedSupplementaryCharge +
@@ -381,6 +306,8 @@ export async function calculateComputationSlip(
             supplementaryCharge: supplementaryChargeToPay,
         });
 
+    // console.log("carriedSupplementaryCharge", carriedSupplementaryCharge)
+
     const carriedCharges =
         requiresActiveLoan && activeLoan
             ? await supplementaryRepository
@@ -401,14 +328,11 @@ export async function calculateComputationSlip(
         installment: data.installment,
         terms: data.terms,
 
-        supplementary:
-            data.supplementary,
+        supplementary: data.supplementary,
 
-        supplementaryBalance:
-            totalSupplementaryBalance,
+        supplementaryBalance: totalSupplementaryBalance,
 
-        applySupplementaryCharge:
-            data.applySupplementaryCharge,
+        applySupplementaryCharge: data.applySupplementaryCharge,
 
         carriedSupplementaryCharge,
 
@@ -416,11 +340,9 @@ export async function calculateComputationSlip(
 
         supplementaryChargeToPay,
 
-        supplementaryChargeAvailableMonths:
-            currentLoanOutstandingCharges.length,
+        supplementaryChargeAvailableMonths: currentLoanOutstandingCharges.length,
 
-        supplementaryChargeMonthsToPay:
-            selectedCurrentCharges.length,
+        supplementaryChargeMonthsToPay: selectedCurrentCharges.length,
 
         supplementaryChargeRemainingMonths:
             Math.max(
@@ -505,10 +427,7 @@ export async function calculateComputationSlip(
                 })
             ),
 
-        effectivityDate:
-            formatDateApi(
-                effectivityDate
-            ),
+        effectivityDate: formatDateApi(effectivityDate),
 
         principalAmount,
         udi,
@@ -519,18 +438,32 @@ export async function calculateComputationSlip(
         udiRebate,
         activeLoanBalance,
 
-        grossCashOut:
-            cashOut.grossCashout,
+        sourceResidualBalance,
+        sourceLoanStatus,
 
-        netCashOut:
-            cashOut.netCashOut,
+        grossCashOut: cashOut.grossCashout,
 
-        totalCashOut:
-            cashOut.totalCashOut,
+        netCashOut: cashOut.netCashOut,
+
+        totalCashOut: cashOut.totalCashOut,
 
         renewedFromId,
 
         shouldCreateSourceCollection,
+
+        sourceCollectionCount: sourceLoanBalance.collectionCount,
+
+        sourceCollection: shouldCreateSourceCollection &&
+            activeLoan &&
+            sourceLoanBalance.collectionCount > 0
+            ? {
+                computationSlipId: activeLoan.computationSlipId,
+
+                collectionDate: formatDateApi(activeLoan.nextCollectionDate),
+
+                amount: Number(activeLoan.installment),
+            }
+            : undefined,
     };
 }
 
@@ -539,8 +472,7 @@ export async function createComputationSlip(
 ) {
     const isRenew = data.transactionType === TRANSACTION_TYPES.renew;
 
-    if (isRenew && !data.renewedFromId
-    ) {
+    if (isRenew && !data.renewedFromId) {
         throw new Error(
             "Source loan is required for renewal"
         );
@@ -656,11 +588,19 @@ export async function createComputationSlip(
             ) {
 
                 const beginningBalance =
-                    data.activeLoanBalance +
-                    data.sourceCollection.amount;
+                    data.sourceResidualBalance;
+
+                const amount =
+                    Math.min(
+                        data.sourceCollection.amount,
+                        beginningBalance
+                    );
 
                 const endingBalance =
-                    data.activeLoanBalance;
+                    Math.max(
+                        0,
+                        beginningBalance - amount
+                    );
 
                 await compslipRepository.createPendingCollection(
                     {
@@ -676,17 +616,13 @@ export async function createComputationSlip(
                                     .collectionDate
                             ),
 
-                        amount:
-                            data
-                                .sourceCollection
-                                .amount,
+                        amount,
 
                         beginningBalance,
 
                         endingBalance,
 
-                        remarks:
-                            "Unposted collection generated during renewal",
+                        remarks: "Unposted collection generated during renewal",
                     },
 
                     tx
@@ -706,16 +642,11 @@ export async function createComputationSlip(
 
             await compslipRepository.closeSourceLoan(
                 {
-                    computationSlipId:
-                        data
-                            .renewedFromId!,
+                    computationSlipId: data.renewedFromId!,
 
-                    closingBalance:
-                        data
-                            .activeLoanBalance,
+                    closingBalance: data.sourceResidualBalance,
 
-                    loanStatus:
-                        "RENEWED",
+                    loanStatus: data.sourceLoanStatus,
                 },
                 tx
             );
@@ -740,7 +671,7 @@ export async function createComputationSlip(
                 const supplementaryEndingBalance =
                     supplementaryBeginningBalance;
 
-                await supplementaryRepository.createPendingSupplementaryCollection(
+                const supplementaryCollection = await supplementaryRepository.createPendingSupplementaryCollection(
                     {
                         computationSlipId:
                             data.renewedFromId,
@@ -772,15 +703,9 @@ export async function createComputationSlip(
                         chargePaid:
                             actualSupplementaryChargeToPay,
 
-                        remainingCharge:
-                            Math.max(
-                                0,
-                                data.currentSupplementaryCharge -
-                                actualSupplementaryChargeToPay
-                            ),
+                        remainingCharge: 0,
 
-                        principalPaid:
-                            0,
+                        principalPaid: 0,
 
                         remarks:
                             "Supplementary charge generated during renewal",
@@ -789,17 +714,23 @@ export async function createComputationSlip(
                     tx
                 );
 
-                /**
-                * Mark the selected supplementary
-                * charge ledger rows as PAID.
-                */
-                await supplementaryRepository
-                    .markSupplementaryChargesAsPaid(
-                        chargesToPay.map(
-                            (charge) => charge.id
-                        ),
-                        tx
-                    );
+                await supplementaryRepository.createSupplementaryCollectionAllocations(
+                    supplementaryCollection.id,
+
+                    chargesToPay.map((charge) => ({
+                        supplementaryChargeId:
+                            charge.id,
+
+                        amount:
+                            Math.max(
+                                0,
+                                Number(charge.chargeAmount) -
+                                Number(charge.paidAmount)
+                            ),
+                    })),
+
+                    tx
+                );
             }
         }
 
@@ -868,7 +799,7 @@ export async function createComputationSlip(
                 tx
             );
 
-        console.log('compslip effectivityDate', effectivityDate)
+        // console.log('compslip effectivityDate', effectivityDate)
 
         if (Number(data.supplementaryBalance) > 0) {
             const chargeSchedule =

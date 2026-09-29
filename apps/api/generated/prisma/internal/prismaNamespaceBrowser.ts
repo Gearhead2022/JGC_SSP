@@ -61,7 +61,8 @@ export const ModelName = {
   LoanCollection: 'LoanCollection',
   BranchCounter: 'BranchCounter',
   SupplementaryCollection: 'SupplementaryCollection',
-  SupplementaryCharge: 'SupplementaryCharge'
+  SupplementaryCharge: 'SupplementaryCharge',
+  SupplementaryCollectionAllocation: 'SupplementaryCollectionAllocation'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -253,6 +254,17 @@ export const SupplementaryChargeScalarFieldEnum = {
 } as const
 
 export type SupplementaryChargeScalarFieldEnum = (typeof SupplementaryChargeScalarFieldEnum)[keyof typeof SupplementaryChargeScalarFieldEnum]
+
+
+export const SupplementaryCollectionAllocationScalarFieldEnum = {
+  id: 'id',
+  supplementaryCollectionId: 'supplementaryCollectionId',
+  supplementaryChargeId: 'supplementaryChargeId',
+  amount: 'amount',
+  createdAt: 'createdAt'
+} as const
+
+export type SupplementaryCollectionAllocationScalarFieldEnum = (typeof SupplementaryCollectionAllocationScalarFieldEnum)[keyof typeof SupplementaryCollectionAllocationScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -1,4 +1,4 @@
-import { LoanStatusType, TransactionType } from "../../constants";
+import { LoanStatusType, SLCollectionStatusType, TransactionType } from "../../constants";
 
 
 export type Pensioner = {
@@ -145,23 +145,60 @@ export type CompslipListItem = {
 
 export type ComputationSlipCalculationInput = {
     transactionType: TransactionType;
-
     age: number;
-
     installment: number;
     terms: number;
     supplementary: number;
-
     transactionDate: Date;
-
     activeLoan?: {
         installment: number;
         terms: number;
         paidTerms: number;
         remainingBalance: number;
         udi: number;
-
         transactionDate: Date;
         nextCollectionDate: Date;
     };
+};
+
+
+export type SupplementaryLoanCollection = {
+    id: string;
+
+    computationSlipId: string;
+    accountNumber: string;
+
+    collectionDate: string;
+
+    amount: number;
+
+    beginningBalance: number;
+    endingBalance: number;
+
+    availableChargeMonths: number;
+    paidChargeMonths: number;
+    remainingChargeMonths: number;
+
+    chargePaid: number;
+    principalPaid: number;
+    remainingCharge: number;
+
+    status:
+    SLCollectionStatusType;
+
+    remarks?: string | null;
+
+    pensioner: Pensioner;
+};
+
+export type SupplementaryLoanSummary = {
+    computationSlipId: string;
+    accountNumber: string;
+
+    supplementaryBalance: number;
+
+    unpaidChargeAmount: number;
+    unpaidChargeMonths: number;
+
+    pensioner: Pensioner;
 };

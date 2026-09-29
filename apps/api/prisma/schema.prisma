@@ -277,6 +277,8 @@ model SupplementaryCollection {
 
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  allocations SupplementaryCollectionAllocation[]
+
   // @@unique([computationSlipId, collectionDate]) //only one supplementary collection can exist per loan account per date.
   @@index([computationSlipId])
   @@index([collectionDate])
@@ -306,6 +308,8 @@ model SupplementaryCharge {
 
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  allocations SupplementaryCollectionAllocation[]
+
   @@unique([computationSlipId, chargeMonth])
   @@index([computationSlipId])
   @@index([chargeMonth])
@@ -318,4 +322,25 @@ enum SupplementaryChargeStatus {
   PARTIAL
   PAID
   SUPERSEDED
+}
+
+model SupplementaryCollectionAllocation {
+  id String @id @default(uuid()) @db.Uuid
+
+  supplementaryCollectionId String @map("supplementary_collection_id") @db.Uuid
+
+  supplementaryChargeId String @map("supplementary_charge_id") @db.Uuid
+
+  amount Decimal @db.Decimal(12, 2)
+
+  supplementaryCollection SupplementaryCollection @relation(fields: [supplementaryCollectionId], references: [id], onDelete: Cascade)
+
+  supplementaryCharge SupplementaryCharge @relation(fields: [supplementaryChargeId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([supplementaryCollectionId, supplementaryChargeId])
+  @@index([supplementaryCollectionId])
+  @@index([supplementaryChargeId])
+  @@map("supplementary_collection_allocations")
 }

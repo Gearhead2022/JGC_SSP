@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/database/prisma";
-import { CollectionStatus } from "../../../../generated/prisma/client";
+import { LoanStatus } from "../../../../generated/prisma/client";
 import { Prisma, PrismaClient } from "../../../../generated/prisma/client";
+import { CreateLoanCollectionData } from "./loan-collection.types";
 
 export type DbClient =
     PrismaClient |
@@ -16,34 +17,6 @@ export async function findComputationSlipById(
         },
     });
 }
-
-// export async function findLatestCollection(
-//     computationSlipId: string
-// ) {
-//     return prisma.loanCollection.findFirst({
-//         where: {
-//             computationSlipId,
-//         },
-//         orderBy: [
-//             {
-//                 collectionDate: "desc",
-//             },
-//             {
-//                 createdAt: "desc",
-//             },
-//         ],
-//     });
-// }
-
-type CreateLoanCollectionData = {
-    computationSlipId: string;
-    collectionDate: Date;
-    amount: number;
-    beginningBalance: number;
-    endingBalance: number;
-    remarks?: string;
-    status: CollectionStatus;
-};
 
 export async function createLoanCollection(
     data: CreateLoanCollectionData,
@@ -90,7 +63,13 @@ export async function findActiveComputationSlipByPensionerId(
     return prisma.computationSlip.findMany({
         where: {
             pensionerId: pensionerId.trim(),
-            status: "ACTIVE",
+            // status: "ACTIVE",
+            status: {
+                in: [
+                    LoanStatus.ACTIVE,
+                    LoanStatus.RENEWED
+                ]
+            },
             deletedAt: null,
         },
 
@@ -123,7 +102,13 @@ export async function findActiveComputationSlipByPensionerIdAndAccountNo(
         where: {
             pensionerId: pensionerId.trim(),
             accountNumber: accountNumber.trim(),
-            status: "ACTIVE",
+            // status: "ACTIVE",
+            status: {
+                in: [
+                    LoanStatus.ACTIVE,
+                    LoanStatus.RENEWED
+                ]
+            },
             deletedAt: null,
         },
 
@@ -207,9 +192,10 @@ export async function findLatestPostedLoanCollection(
 }
 
 export async function findLoanCollectionById(
-    collectionId: string
+    collectionId: string,
+    db: DbClient = prisma,
 ) {
-    return prisma.loanCollection.findUnique({
+    return db.loanCollection.findUnique({
         where: {
             id: collectionId,
         },
@@ -217,15 +203,42 @@ export async function findLoanCollectionById(
 }
 
 export async function postLoanCollection(
-    collectionId: string
+    collectionId: string,
+    db: DbClient = prisma,
 ) {
-    return prisma.loanCollection.update({
+    return db.loanCollection.update({
         where: {
             id: collectionId,
         },
         data: {
             status: "POSTED",
             postedAt: new Date(),
+        },
+    });
+}
+
+export async function updateLoanStatus(
+    computationSlipId: string,
+    loanStatus: "CLOSED" | "RENEWED",
+    db: DbClient = prisma
+) {
+    return db.computationSlip.update({
+        where: {
+            id:
+                computationSlipId,
+        },
+
+        data: {
+            status:
+                loanStatus,
+
+            ...(loanStatus === "CLOSED"
+                ? {
+                    closingBalance: 0,
+                    closedAt:
+                        new Date(),
+                }
+                : {}),
         },
     });
 }

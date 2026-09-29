@@ -72,3 +72,8 @@ export type SupplementaryCollection = Prisma.SupplementaryCollectionModel
  * 
  */
 export type SupplementaryCharge = Prisma.SupplementaryChargeModel
+/**
+ * Model SupplementaryCollectionAllocation
+ * 
+ */
+export type SupplementaryCollectionAllocation = Prisma.SupplementaryCollectionAllocationModel

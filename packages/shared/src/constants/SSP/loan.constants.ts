@@ -165,4 +165,13 @@ export const LOAN_STATUS_TYPES = {
 export type LoanStatusType =
     typeof LOAN_STATUS_TYPES[keyof typeof LOAN_STATUS_TYPES];
 
+export const SL_COLLECTION_STATUS = {
+    pending: "PENDING",
+    posted: "POSTED",
+    cancelled: "CANCELLED"
+} as const;
+
+export type SLCollectionStatusType =
+    typeof SL_COLLECTION_STATUS[keyof typeof SL_COLLECTION_STATUS];
+
 export const MINIMUM_PAID_TERMS_FOR_RENEWAL = 1;

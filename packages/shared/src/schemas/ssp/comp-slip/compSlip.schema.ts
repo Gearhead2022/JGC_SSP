@@ -236,6 +236,13 @@ export const computationSlipCalculationResultSchema =
                 supplementaryChargeBreakdownItemSchema
             ),
 
+        sourceResidualBalance: z.number()
+            .min(0),
+        sourceLoanStatus: z.enum([
+            "CLOSED",
+            "RENEWED",
+        ]),
+
     });
 
 export type ComputationSlipCalculationResult = z.infer<typeof computationSlipCalculationResultSchema>;

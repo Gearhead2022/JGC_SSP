@@ -1,5 +1,5 @@
 import { addMonthsToDate, dateStringToUtcDate, SL_RATE, type CreateLoanCollectionSchema } from "@repo/shared";
-import * as repository from "./loan-collection.repository";
+import * as loanrepository from "./loan-collection.repository";
 import * as supplementaryRepository from "../sl-collection/sl-collection.repository";
 import * as compslipRepository from "../comp-slip/comp-slip.repository";
 import { prisma } from "@/lib/database/prisma";
@@ -8,7 +8,7 @@ export async function createLoanCollection(
     data: CreateLoanCollectionSchema
 ) {
     const computationSlip =
-        await repository.findComputationSlipById(
+        await loanrepository.findComputationSlipById(
             data.computationSlipId
         );
 
@@ -50,7 +50,7 @@ export async function createLoanCollection(
              * Prevent duplicate regular collection
              */
             const existingCollection =
-                await repository.findCollectionByDate(
+                await loanrepository.findCollectionByDate(
                     data.computationSlipId,
                     collectionDate,
                     tx
@@ -66,7 +66,7 @@ export async function createLoanCollection(
              * REGULAR LOAN COLLECTION
              */
             const latestPostedCollection =
-                await repository.findLatestPostedLoanCollection(
+                await loanrepository.findLatestPostedLoanCollection(
                     data.computationSlipId,
                     tx
                 );
@@ -102,10 +102,9 @@ export async function createLoanCollection(
                 );
 
             const loanCollection =
-                await repository.createLoanCollection(
+                await loanrepository.createLoanCollection(
                     {
-                        computationSlipId:
-                            data.computationSlipId,
+                        computationSlipId: data.computationSlipId,
 
                         collectionDate,
 
@@ -115,12 +114,9 @@ export async function createLoanCollection(
 
                         endingBalance,
 
-                        remarks:
-                            data.remarks ??
-                            "Normal Collection",
+                        remarks: data.remarks ?? "Normal Collection",
 
-                        status:
-                            "PENDING",
+                        status: "PENDING",
                     },
 
                     tx
@@ -234,7 +230,7 @@ export async function createLoanCollection(
 
                         principalPaid: supplementaryPrincipalPaid,
 
-                        remarks: "Supplementary principal collection",
+                        remarks: "Loan Collection & deduction for supplementary principal",
 
                         status: "PENDING",
                     },
@@ -264,7 +260,7 @@ export async function getActiveLoanByPensionerId(
     pensionerId: string
 ) {
     const computationSlips =
-        await repository.findActiveComputationSlipByPensionerId(
+        await loanrepository.findActiveComputationSlipByPensionerId(
             pensionerId
         );
 
@@ -304,65 +300,39 @@ export async function getActiveLoanByPensionerId(
         const loanStatus = computationSlip.status;
 
         return {
-            computationSlipId:
-                computationSlip.id,
+            computationSlipId: computationSlip.id,
 
-            accountNumber:
-                computationSlip.accountNumber,
+            accountNumber: computationSlip.accountNumber,
 
-            controlNumber:
-                computationSlip.controlNumber,
+            controlNumber: computationSlip.controlNumber,
 
-            counterNumber:
-                computationSlip.counterNumber,
+            counterNumber: computationSlip.counterNumber,
 
-            branchName:
-                computationSlip.branchName,
+            branchName: computationSlip.branchName,
 
-            status:
-                computationSlip.status,
+            status: computationSlip.status,
 
-            transactionType:
-                computationSlip.transactionType,
+            transactionType: computationSlip.transactionType,
 
             pensioner: {
-                id:
-                    computationSlip.pensioner.id,
+                id: computationSlip.pensioner.id,
 
-                legacyPensionerId:
-                    computationSlip.pensioner
-                        .legacyPensionerId,
+                legacyPensionerId: computationSlip.pensioner.legacyPensionerId,
 
-                firstName:
-                    computationSlip.pensioner
-                        .firstName,
+                firstName: computationSlip.pensioner.firstName,
 
-                middleName:
-                    computationSlip.pensioner
-                        .middleName,
+                middleName: computationSlip.pensioner.middleName,
 
-                lastName:
-                    computationSlip.pensioner
-                        .lastName,
+                lastName: computationSlip.pensioner.lastName,
             },
 
-            installment:
-                Number(
-                    computationSlip.installment
-                ),
+            installment: Number(computationSlip.installment),
 
-            principalAmount:
-                Number(
-                    computationSlip.principalAmount
-                ),
+            principalAmount: Number(computationSlip.principalAmount),
 
-            udi:
-                Number(
-                    computationSlip.udi
-                ),
+            udi: Number(computationSlip.udi),
 
-            terms:
-                computationSlip.terms,
+            terms: computationSlip.terms,
 
             effectivityDate,
 
@@ -388,7 +358,7 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
     accountNumber: string
 ) {
     const computationSlip =
-        await repository.findActiveComputationSlipByPensionerIdAndAccountNo(
+        await loanrepository.findActiveComputationSlipByPensionerIdAndAccountNo(
             pensionerId,
             accountNumber
         );
@@ -421,14 +391,11 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
                 computationSlip.principalAmount
             );
 
-    const paidTerms =
-        postedCollections.length;
+    const paidTerms = postedCollections.length;
 
-    const effectivityDate =
-        computationSlip.effectivityDate;
+    const effectivityDate = computationSlip.effectivityDate;
 
-    const transactionDate =
-        computationSlip.transactionDate;
+    const transactionDate = computationSlip.transactionDate;
 
     const nextCollectionDate =
         addMonthsToDate(
@@ -437,50 +404,29 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
         );
 
     return {
-        computationSlipId:
-            computationSlip.id,
+        computationSlipId: computationSlip.id,
 
-        accountNumber:
-            computationSlip.accountNumber,
+        accountNumber: computationSlip.accountNumber,
 
         pensioner: {
-            id:
-                computationSlip.pensioner.id,
+            id: computationSlip.pensioner.id,
 
-            legacyPensionerId:
-                computationSlip.pensioner
-                    .legacyPensionerId,
+            legacyPensionerId: computationSlip.pensioner.legacyPensionerId,
 
-            firstName:
-                computationSlip.pensioner
-                    .firstName,
+            firstName: computationSlip.pensioner.firstName,
 
-            middleName:
-                computationSlip.pensioner
-                    .middleName,
+            middleName: computationSlip.pensioner.middleName,
 
-            lastName:
-                computationSlip.pensioner
-                    .lastName,
+            lastName: computationSlip.pensioner.lastName,
         },
 
-        installment:
-            Number(
-                computationSlip.installment
-            ),
+        installment: Number(computationSlip.installment),
 
-        principalAmount:
-            Number(
-                computationSlip.principalAmount
-            ),
+        principalAmount: Number(computationSlip.principalAmount),
 
-        udi:
-            Number(
-                computationSlip.udi
-            ),
+        udi: Number(computationSlip.udi),
 
-        terms:
-            computationSlip.terms,
+        terms: computationSlip.terms,
 
         effectivityDate,
         transactionDate,
@@ -491,8 +437,7 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
 
         nextCollectionDate,
 
-        loanStatus:
-            computationSlip.status,
+        loanStatus: computationSlip.status,
 
         supplementary: computationSlip.supplementary,
 
@@ -503,7 +448,7 @@ export async function getActiveLoanByPensionerIdAndAccountNo(
 export async function getLoanCollectionHistory(
     computationSlipId: string
 ) {
-    return repository.findCollectionHistory(
+    return loanrepository.findCollectionHistory(
         computationSlipId
     );
 }
@@ -511,30 +456,55 @@ export async function getLoanCollectionHistory(
 export async function postLoanCollection(
     collectionId: string
 ) {
-    const collection =
-        await repository.findLoanCollectionById(
-            collectionId
-        );
+    return prisma.$transaction(
+        async (tx) => {
+            const collection =
+                await loanrepository.findLoanCollectionById(
+                    collectionId,
+                    tx
+                );
 
-    if (!collection) {
-        throw new Error(
-            "Collection not found"
-        );
-    }
+            if (!collection) {
+                throw new Error("Collection not found");
+            }
 
-    if (collection.status === "POSTED") {
-        throw new Error(
-            "Collection is already posted"
-        );
-    }
+            if (
+                collection.status === "POSTED"
+            ) {
+                throw new Error("Collection is already posted");
+            }
 
-    if (collection.status === "CANCELLED") {
-        throw new Error(
-            "Cancelled collection cannot be posted"
-        );
-    }
+            if (
+                collection.status === "CANCELLED"
+            ) {
+                throw new Error("Cancelled collection cannot be posted");
+            }
 
-    return repository.postLoanCollection(
-        collectionId
+            /**
+             * Post the collection first.
+             */
+            const postedCollection =
+                await loanrepository.postLoanCollection(
+                    collectionId,
+                    tx
+                );
+
+            /**
+             * If this collection completed
+             * the remaining source balance,
+             * close the source loan.
+             */
+            const endingBalance = Number(postedCollection.endingBalance);
+
+            if (endingBalance <= 0) {
+                await loanrepository.updateLoanStatus(
+                    postedCollection.computationSlipId,
+                    "CLOSED",
+                    tx
+                );
+            }
+
+            return postedCollection;
+        }
     );
 }

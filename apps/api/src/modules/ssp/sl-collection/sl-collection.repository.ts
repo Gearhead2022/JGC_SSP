@@ -170,14 +170,20 @@ export async function createPendingSupplementaryCollection(
     });
 }
 
-export async function getOutstandingSupplementaryChargesForPensioner(
-    pensionerId: string
+export async function getCarriedSupplementaryChargesForPensioner(
+    pensionerId: string,
+    currentComputationSlipId: string,
+    db: DbClient = prisma
 ) {
     const charges =
-        await prisma.supplementaryCharge.findMany({
+        await db.supplementaryCharge.findMany({
             where: {
                 computationSlip: {
                     pensionerId,
+                },
+
+                computationSlipId: {
+                    not: currentComputationSlipId,
                 },
 
                 status: {
@@ -195,13 +201,17 @@ export async function getOutstandingSupplementaryChargesForPensioner(
         });
 
     return charges.reduce(
-        (total, charge) =>
-            total +
-            Math.max(
-                0,
+        (total, charge) => {
+            const outstanding =
                 Number(charge.chargeAmount) -
-                Number(charge.paidAmount)
-            ),
+                Number(charge.paidAmount);
+
+            return total +
+                Math.max(
+                    0,
+                    outstanding
+                );
+        },
         0
     );
 }
@@ -227,7 +237,7 @@ export function generateSupplementaryChargeSchedule({
         return [];
     }
 
-    console.log('sl-collection repo effectivityDate', transactionDate)
+    // console.log('sl-collection repo effectivityDate', transactionDate)
 
     const monthlyCharge =
         roundMoney(
@@ -248,7 +258,7 @@ export function generateSupplementaryChargeSchedule({
         );
 
 
-        console.log('sl-collection repo effectivityDate after converted', chargeMonth)
+        // console.log('sl-collection repo effectivityDate after converted', chargeMonth)
 
         schedule.push({
             chargeMonth,
@@ -352,11 +362,17 @@ export async function markDueSupplementaryChargesAsUnpaid(
     transactionDate: Date,
     db: DbClient = prisma
 ) {
-    const transactionMonth = new Date(transactionDate.getFullYear(), transactionDate.getMonth(), 1);
+    // const transactionMonth = new Date(transactionDate.getUTCFullYear(), transactionDate.getUTCMonth(), transactionDate.getUTCDate());
 
-    const startDate = dateStringToUtcDate(transactionMonth);
+    const transactionMonth = new Date(
+        Date.UTC(
+            transactionDate.getUTCFullYear(),
+            transactionDate.getUTCMonth() + 1,
+            1
+        )
+    );
 
-    console.log("markDueSupplementaryChargesAsUnpaid", startDate)
+    // console.log("markDueSupplementaryChargesAsUnpaid", transactionMonth)
 
     return db.supplementaryCharge.updateMany({
         where: {
@@ -364,7 +380,7 @@ export async function markDueSupplementaryChargesAsUnpaid(
 
             status: "SCHEDULED",
 
-            chargeMonth: { lte: startDate },
+            chargeMonth: { lt: transactionMonth },
         },
 
         data: {
@@ -432,44 +448,44 @@ export async function findCurrentSupplementaryChargesToPay(
     });
 }
 
-export async function markSupplementaryChargesAsPaid(
-    chargeIds: string[],
-    db: DbClient = prisma
-) {
-    if (chargeIds.length === 0) {
-        return;
-    }
+// export async function markSupplementaryChargesAsPaid(
+//     chargeIds: string[],
+//     db: DbClient = prisma
+// ) {
+//     if (chargeIds.length === 0) {
+//         return;
+//     }
 
-    const charges =
-        await db.supplementaryCharge.findMany({
-            where: {
-                id: {
-                    in: chargeIds,
-                },
-                status: {
-                    in: [
-                        SupplementaryChargeStatus.UNPAID,
-                        SupplementaryChargeStatus.PARTIAL
-                    ],
-                },
-            },
-        });
+//     const charges =
+//         await db.supplementaryCharge.findMany({
+//             where: {
+//                 id: {
+//                     in: chargeIds,
+//                 },
+//                 status: {
+//                     in: [
+//                         SupplementaryChargeStatus.UNPAID,
+//                         SupplementaryChargeStatus.PARTIAL
+//                     ],
+//                 },
+//             },
+//         });
 
-    for (const charge of charges) {
-        await db.supplementaryCharge.update({
-            where: {
-                id: charge.id,
-            },
-            data: {
-                paidAmount:
-                    charge.chargeAmount,
+//     for (const charge of charges) {
+//         await db.supplementaryCharge.update({
+//             where: {
+//                 id: charge.id,
+//             },
+//             data: {
+//                 paidAmount:
+//                     charge.chargeAmount,
 
-                status:
-                    SupplementaryChargeStatus.UNPAID,
-            },
-        });
-    }
-}
+//                 status:
+//                     SupplementaryChargeStatus.UNPAID,
+//             },
+//         });
+//     }
+// }
 
 export async function findLastPaidSupplementaryCharge(
     computationSlipId: string,
@@ -559,6 +575,140 @@ export async function findOutstandingChargesByLoan(
 
         orderBy: {
             chargeMonth: "asc",
+        },
+    });
+}
+
+/**
+ * Get supplementary collection history
+ * using pensioner + loan account.
+ */
+export async function findSupplementaryCollectionsByPensionerAndAccount(
+    pensionerId: string,
+    accountNumber: string,
+    db: DbClient = prisma
+) {
+    return db.supplementaryCollection.findMany({
+        where: {
+            computationSlip: {
+                pensionerId,
+                accountNumber,
+            },
+        },
+
+        include: {
+            computationSlip: {
+                select: {
+                    id: true,
+                    accountNumber: true,
+
+                    pensioner: {
+                        select: {
+                            id: true,
+                            legacyPensionerId: true,
+                            firstName: true,
+                            middleName: true,
+                            lastName: true,
+                            actualPension: true,
+                            bankName: true,
+                        },
+                    },
+                },
+            },
+        },
+
+        orderBy: [
+            {
+                collectionDate: "desc",
+            },
+            {
+                createdAt: "desc",
+            },
+        ],
+    });
+}
+
+/**
+ * Find collection by ID.
+ */
+export async function findSupplementaryCollectionById(
+    collectionId: string,
+    db: DbClient = prisma
+) {
+    return db.supplementaryCollection.findUnique({
+        where: {
+            id: collectionId,
+        },
+    });
+}
+
+/**
+ * Post pending supplementary collection.
+ */
+export async function postSupplementaryCollection(
+    collectionId: string,
+    db: DbClient = prisma
+) {
+    return db.supplementaryCollection.update({
+        where: {
+            id: collectionId,
+        },
+
+        data: {
+            status:
+                CollectionStatus.POSTED,
+
+            postedAt:
+                new Date(),
+        },
+    });
+}
+
+
+// pending supplementary collection
+
+
+export async function createSupplementaryCollectionAllocations(
+    supplementaryCollectionId: string,
+    charges: {
+        supplementaryChargeId: string;
+        amount: number;
+    }[],
+    db: DbClient = prisma
+) {
+    if (charges.length === 0) {
+        return;
+    }
+
+    return db.supplementaryCollectionAllocation.createMany({
+        data: charges.map((charge) => ({
+            supplementaryCollectionId,
+            supplementaryChargeId:
+                charge.supplementaryChargeId,
+            amount: charge.amount,
+        })),
+    });
+}
+
+//fetch for posting:
+
+export async function findSupplementaryCollectionForPosting(
+    collectionId: string,
+    db: DbClient = prisma
+) {
+    return db.supplementaryCollection.findUnique({
+        where: {
+            id: collectionId,
+        },
+
+        include: {
+            allocations: {
+                include: {
+                    supplementaryCharge: true,
+                },
+            },
+
+            computationSlip: true,
         },
     });
 }

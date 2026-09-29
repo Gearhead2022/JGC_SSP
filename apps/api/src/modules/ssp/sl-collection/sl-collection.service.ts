@@ -1,75 +1,220 @@
-import { addMonthsToDate, dateStringToUtcDate, type CreateLoanCollectionSchema } from "@repo/shared";
+import { addMonthsToDate, dateStringToUtcDate, SL_RATE, type CreateLoanCollectionSchema } from "@repo/shared";
 import * as supplementaryRepository from "./sl-collection.repository";
+import { prisma } from "@/lib/database/prisma";
+import * as compslipRepository from "../comp-slip/comp-slip.repository";
 
-export async function createSupplementaryCollection(
-    data: CreateLoanCollectionSchema
+export async function getSupplementaryByPensionerIdAndAccountNo(
+    pensionerId: string,
+    accountNumber: string
 ) {
-    const computationSlip = await supplementaryRepository.findComputationSlipById(data.computationSlipId);
-
-    if (!computationSlip) {
+    if (!pensionerId) {
         throw new Error(
-            "Computation slip not found"
+            "Pensioner ID is required"
         );
     }
 
-    const collectionDate = dateStringToUtcDate(data.collectionDate);
-
-    /*
-     * Check if this month's collection
-     * has already been created.
-     */
-    // const existingCollection = await supplementaeyRepository.findCollectionByDate(
-    //     data.computationSlipId,
-    //     collectionDate
-    // );
-
-    // if (existingCollection) {
-    //     return existingCollection;
-    // }
-
-    /*
-     * IMPORTANT:
-     * Latest balance should come from
-     * POSTED collections only.
-     */
-    const latestPostedCollection =
-        await supplementaryRepository.findLatestPostedSupplementaryCollection(
-            data.computationSlipId
+    if (!accountNumber) {
+        throw new Error(
+            "Loan account number is required"
         );
+    }
 
-    const beginningBalance =
-        latestPostedCollection
-            ? Number(
-                latestPostedCollection.endingBalance
-            )
-            : Number(
-                computationSlip.supplementary
+    const collections =
+        await supplementaryRepository
+            .findSupplementaryCollectionsByPensionerAndAccount(
+                pensionerId,
+                accountNumber
             );
 
-    if (beginningBalance <= 0) {
-        throw new Error(
-            "This loan is already fully paid"
-        );
-    }
+    return collections.map(
+        (collection) => ({
+            id:
+                collection.id,
 
-    const amount = Math.min(data.amount, beginningBalance);
+            computationSlipId:
+                collection.computationSlipId,
 
-    const endingBalance = Math.max(0, beginningBalance - amount);
+            accountNumber:
+                collection
+                    .computationSlip
+                    .accountNumber,
 
-    // return supplementaeyRepository.createSupplementaryCollection({
-    //     computationSlipId: data.computationSlipId,
+            collectionDate:
+                collection.collectionDate,
 
-    //     collectionDate,
+            amount:
+                Number(
+                    collection.amount
+                ),
 
-    //     amount,
+            beginningBalance:
+                Number(
+                    collection.beginningBalance
+                ),
 
-    //     beginningBalance,
+            endingBalance:
+                Number(
+                    collection.endingBalance
+                ),
 
-    //     endingBalance,
+            availableChargeMonths:
+                collection.availableChargeMonths,
 
-    //     remarks: data.remarks ?? 'Normal Collection',
+            paidChargeMonths:
+                collection.paidChargeMonths,
 
-    //     status: "PENDING",
-    // });
+            remainingChargeMonths:
+                collection.remainingChargeMonths,
+
+            chargeAmount:
+                Number(
+                    collection.chargeAmount
+                ),
+
+            chargePaid:
+                Number(
+                    collection.chargePaid
+                ),
+
+            principalPaid:
+                Number(
+                    collection.principalPaid
+                ),
+
+            remainingCharge:
+                Number(
+                    collection.remainingCharge
+                ),
+
+            status:
+                collection.status,
+
+            remarks:
+                collection.remarks,
+
+            pensioner:
+                collection
+                    .computationSlip
+                    .pensioner,
+        })
+    );
 }
 
+export async function postSupplementaryCollection(
+    collectionId: string
+) {
+    return prisma.$transaction(async (tx) => {
+        const collection =
+            await supplementaryRepository
+                .findSupplementaryCollectionForPosting(
+                    collectionId,
+                    tx
+                );
+
+        if (!collection) {
+            throw new Error(
+                "Supplementary collection not found"
+            );
+        }
+
+        if (collection.status === "POSTED") {
+            throw new Error(
+                "Supplementary collection is already posted"
+            );
+        }
+
+        if (collection.status === "CANCELLED") {
+            throw new Error(
+                "Cancelled supplementary collection cannot be posted"
+            );
+        }
+
+        /**
+         * 1. Apply charge allocations
+         */
+        for (const allocation of collection.allocations) {
+            const charge =
+                allocation.supplementaryCharge;
+
+            const chargeAmount =
+                Number(charge.chargeAmount);
+
+            const currentPaidAmount =
+                Number(charge.paidAmount);
+
+            const allocationAmount =
+                Number(allocation.amount);
+
+            const newPaidAmount =
+                Math.min(
+                    chargeAmount,
+                    currentPaidAmount +
+                    allocationAmount
+                );
+
+            await tx.supplementaryCharge.update({
+                where: {
+                    id: charge.id,
+                },
+
+                data: {
+                    paidAmount:
+                        newPaidAmount,
+
+                    status:
+                        newPaidAmount >=
+                            chargeAmount
+                            ? "PAID"
+                            : "PARTIAL",
+                },
+            });
+        }
+
+        /**
+         * 2. If payment also reduced SL principal,
+         * update current balance and future charges.
+         */
+        const principalPaid =
+            Number(
+                collection.principalPaid
+            );
+
+        if (principalPaid > 0) {
+            const newBalance =
+                Number(
+                    collection.endingBalance
+                );
+
+            await compslipRepository
+                .updateSupplementaryBalance(
+                    collection.computationSlipId,
+                    newBalance,
+                    tx
+                );
+
+            await supplementaryRepository
+                .recalculateFutureSupplementaryCharges(
+                    collection.computationSlipId,
+                    collection.collectionDate,
+                    newBalance,
+                    SL_RATE,
+                    tx
+                );
+        }
+
+        /**
+         * 3. Post the collection
+         */
+        return tx.supplementaryCollection.update({
+            where: {
+                id: collectionId,
+            },
+
+            data: {
+                status: "POSTED",
+                postedAt:
+                    new Date(),
+            },
+        });
+    });
+}

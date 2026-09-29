@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     CreateComputationSlipSchema, Pensioner, TRANSACTION_TYPES, ActiveLoanCollection, generateUDIRebateSchedule,
     CUT_OFF_DATE_UDI, formatDateApi, addMonthsToDate, CalculateComputationSlipSchema, LOAN_STATUS_TYPES,
@@ -27,6 +27,7 @@ import { formatDateForInput, formatMonthYear } from "@/utils/format-date";
 import { useActiveLoanByPensionerIdAndAccountNo, useCalculateComputationSlip, useNextControlNumber } from "../hooks/usePensionerSearch";
 import { useActiveLoanCollection } from "../../loan-collection/hooks/useLoanCollection";
 import { Notebook, NotebookIcon } from "lucide-react";
+import { AppToast } from "@/lib/toast";
 
 type ComputationSlipContentProps = {
     onCreate?: (data: CreateComputationSlipSchema) => void;
@@ -142,6 +143,8 @@ export default function ComputationSlipContent({
     const [selectedPensioner, setSelectedPensioner] = useState<Pensioner | null>(null);
     const [selectedAccountNumber, setSelectedAccountNumber] = useState<string>("");
     const [supplementaryBalance, setSupplementaryBalance] = useState<number>(0);
+
+    const previousRenewEligibility = useRef<boolean | null>(null);
 
     const installment = Number(watch("installment")) || 0;
     const loanTerms = Number(watch("terms")) || 0;
@@ -389,6 +392,19 @@ export default function ComputationSlipContent({
             })
             : undefined;
 
+    useEffect(() => {
+        if (
+            transactionType === TRANSACTION_TYPES.renew &&
+            eligibility &&
+            !eligibility.eligible &&
+            previousRenewEligibility.current !== false
+        ) {
+            AppToast.warning(`Renewal is not allowed ${eligibility.reason}`);
+        }
+
+        previousRenewEligibility.current = eligibility?.eligible ?? null;
+    }, [transactionType, eligibility]);
+
     return (
         <div className="space-y-2 py-2">
             <div>
@@ -421,8 +437,7 @@ export default function ComputationSlipContent({
 
                                     <div className="text-right">
                                         <p className={`font-mono text-[15px] ${INK}`}>
-                                            ₱
-                                            {formatNumber(Number(selectedPensioner.actualPension))}
+                                            ₱ {formatNumber(Number(selectedPensioner.actualPension))}
                                         </p>
                                         <p className={`text-[12px] ${MUTED}`}>Actual pension</p>
                                     </div>
@@ -470,9 +485,7 @@ export default function ComputationSlipContent({
                         eligibility &&
                         !eligibility.eligible && (
                             <div className="space-y-10">
-                                <div
-                                    className={`flex items-start gap-3 rounded-sm border ${HAIRLINE} bg-white p-4`}
-                                >
+                                <div className={`flex items-start gap-3 rounded-sm border ${HAIRLINE} bg-white p-4`}>
                                     <NotebookIcon className="mt-0.5 h-5 w-5 shrink-0 text-red-900" />
 
                                     <p className="text-sm text-red-900">
@@ -844,13 +857,6 @@ export default function ComputationSlipContent({
                                             />
 
                                             <SlipLine
-                                                label="SL charge to deduct"
-                                                value={`₱ ${formatNumber(
-                                                    supplementaryChargeToPay
-                                                )}`}
-                                                emphasis
-                                            />
-                                            <SlipLine
                                                 label="SL charge months available"
                                                 value={`${supplementaryChargeAvailableMonths}`}
                                             />
@@ -867,7 +873,7 @@ export default function ComputationSlipContent({
 
                                             <SlipLine
                                                 label="SL carried supplementary charge"
-                                                value={`${carriedSupplementaryCharge}`}
+                                                value={`₱ ${formatNumber(carriedSupplementaryCharge)}`}
                                             />
 
                                             <SlipLine
@@ -918,6 +924,13 @@ export default function ComputationSlipContent({
                                         )}
                                     </span>
 
+                                    <span className="text-gray-600">
+                                        ₱
+                                        {formatNumber(
+                                            item.principalBasis
+                                        )}
+                                    </span>
+
                                     <span className="font-medium text-gray-900">
                                         ₱
                                         {formatNumber(
@@ -930,10 +943,10 @@ export default function ComputationSlipContent({
                     </div>
 
                     <div className="mt-3 border-t border-gray-200 pt-3">
-                        <div className="flex justify-between text-sm font-semibold">
+                        <div className="flex justify-between text-sm text-gray-900 font-semibold">
                             <span>Carried charge</span>
 
-                            <span>
+                            <span className="font-semibold font-medium text-gray-900">
                                 ₱
                                 {formatNumber(
                                     carriedSupplementaryCharge
@@ -984,13 +997,13 @@ export default function ComputationSlipContent({
                     </div>
 
                     <div className="mt-3 border-t border-gray-200 pt-3">
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-sm text-gray-900">
                             <span>
                                 Selected {supplementaryChargeMonthsSelected} of{" "}
                                 {supplementaryChargeAvailableMonths} month(s)
                             </span>
 
-                            <span className="font-semibold">
+                            <span className="font-semibold font-medium text-gray-900">
                                 ₱
                                 {formatNumber(
                                     currentSupplementaryCharge
@@ -1061,7 +1074,7 @@ export default function ComputationSlipContent({
                                 emptyMessage="Supplementary loan schedule will appear here."
                             />
                         </div>
-                 
+
                     </div>
                 )
             }
